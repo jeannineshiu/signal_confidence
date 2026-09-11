@@ -1,0 +1,143 @@
+{
+  "accuracy": {
+    "ci95": [
+      0.3725303790298501,
+      0.590359949227907
+    ],
+    "k": 37,
+    "n": 77,
+    "p_vs_coin_flip": 0.8198929037490487,
+    "value": 0.4805194805194805
+  },
+  "baselines": {
+    "always_up_all_directional_labels": {
+      "ci95": [
+        0.5087606012781543,
+        0.6994870802368467
+      ],
+      "k": 59,
+      "n": 97,
+      "p_vs_coin_flip": 0.04172932120128598,
+      "value": 0.6082474226804123
+    },
+    "always_up_same_items": {
+      "ci95": [
+        0.48576853167949463,
+        0.6997798270317195
+      ],
+      "k": 46,
+      "n": 77,
+      "p_vs_coin_flip": 0.11001559898513336,
+      "value": 0.5974025974025974
+    },
+    "coin_flip": {
+      "range95_at_n": [
+        0.38961038961038963,
+        0.6103896103896104
+      ],
+      "value": 0.5
+    },
+    "llm_vs_always_up_mcnemar": {
+      "a_only": 15,
+      "b_only": 24,
+      "p_value": 0.19959086691960692
+    }
+  },
+  "brier": {
+    "ci95": [
+      0.2515909090909091,
+      0.3496428571428571
+    ],
+    "coin_flip_reference": 0.25,
+    "skill_vs_coin_flip": -0.19974025974025955,
+    "value": 0.2999350649350649
+  },
+  "confidence": {
+    "below_half": 0,
+    "distinct_values": {
+      "0.65": 11,
+      "0.7": 34,
+      "0.75": 27,
+      "0.8": 5
+    },
+    "mean": 0.716883116883117,
+    "mean_minus_accuracy": 0.2363636363636365
+  },
+  "coverage": 0.7333333333333333,
+  "ece": {
+    "ci95": [
+      0.12987012987012986,
+      0.34610389610389597
+    ],
+    "perfect_calibration_null": {
+      "mean": 0.060980519480519475,
+      "method": "simulation: hit ~ Bernoulli(confidence), same confidences",
+      "n_sims": 10000,
+      "p95": 0.11818181818181815,
+      "p_value": 9.999000099990002e-05
+    },
+    "value": 0.23636363636363628
+  },
+  "funnel": {
+    "api_error": 0,
+    "flat_label": 6,
+    "neutral": 22,
+    "parse_failure": 0,
+    "scored": 77,
+    "total": 105
+  },
+  "n_headlines": 105,
+  "reliability_table": [
+    {
+      "accuracy": 0.2727272727272727,
+      "bin_hi": 0.7,
+      "bin_lo": 0.6,
+      "ci_high": 0.5656453011761291,
+      "ci_low": 0.09746059290024889,
+      "gap": -0.3772727272727274,
+      "mean_confidence": 0.6500000000000001,
+      "n": 11
+    },
+    {
+      "accuracy": 0.5245901639344263,
+      "bin_hi": 0.8,
+      "bin_lo": 0.7,
+      "ci_high": 0.6446951257715474,
+      "ci_low": 0.401571569249857,
+      "gap": -0.1975409836065577,
+      "mean_confidence": 0.722131147540984,
+      "n": 61
+    },
+    {
+      "accuracy": 0.4,
+      "bin_hi": 0.9,
+      "bin_lo": 0.8,
+      "ci_high": 0.769275718723987,
+      "ci_low": 0.11762077423264783,
+      "gap": -0.4,
+      "mean_confidence": 0.8,
+      "n": 5
+    }
+  ],
+  "run": {
+    "llm_calls": 105,
+    "llm_cost_usd": 0.00624615,
+    "model": "gpt-4o-mini-2024-07-18",
+    "prompt_sha": "a92bc2e60621cb71",
+    "prompt_version": "v1",
+    "split": "test"
+  },
+  "settings": {
+    "bin_edges": [
+      0.0,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "n_boot": 10000,
+    "seed": 42
+  }
+}
