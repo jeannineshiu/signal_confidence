@@ -109,7 +109,7 @@ Re-run vs the primary run on the same 105 headlines: same direction on 104/105, 
   contain the ticker and headline only, never a date.
 - **Accurate timestamps.** Checked against Apple's five earnings releases in the window: every results
   headline is stamped at or after the 16:30 ET release. Live-blog headlines are excluded because their
-  titles are rewritten after their timestamp (`notes/phase1_data_audit.md`).
+  titles are rewritten after their timestamp (`LIVE_BLOG_PATTERN` in `sigconf/config.py`).
 - **A held-out split, used once.** Headlines are split chronologically: 45 dev (2023-11 → 2024-03) and
   105 test (2024-03 → 2024-11). Analysis choices such as the dead-band, bins, neutral handling and
   eligibility rules were fixed in `sigconf/config.py` before any test result existed. The prompt was
@@ -179,5 +179,3 @@ Kaggle file, which is not needed to reproduce results.
 - Harness validation fixtures: FiveThirtyEight
   [`checking-our-work-data`](https://github.com/fivethirtyeight/checking-our-work-data),
   **CC BY 4.0** (`tests/fixtures/538/ATTRIBUTION.md`).
-- The dataset search, including sources rejected as synthetic or pre-cutoff, is in
-  `notes/dataset_survey.md`.

@@ -10,7 +10,7 @@ If the two conflict, the spec wins. Update this plan instead of letting it drift
 | # | Decision | Recommendation | Alternative / note |
 |---|----------|----------------|--------------------|
 | D1 | LLM provider + model | **OpenAI `gpt-4o-mini-2024-07-18`** (dated snapshot, pinned 2026-09-11, because the bare alias can be repointed) through the plain `openai` SDK (no LangChain), `temperature=0`, `seed=42`. **Locked by D2:** its training cutoff (2023-10-01) predates every headline, and the signal stage refuses any model not in `LLM_TRAINING_CUTOFFS` with a cutoff before `SAMPLE_START`. | This follows `aws-ai-agent` (Pydantic schema, same API key) and keeps dependencies minimal. About 150 calls, so roughly $0.02 per full run. |
-| D2 | Headline dataset | **Revised 2026-09-11: only real data, and it must postdate the training cutoff.** Kaggle `frankossai/apple-stock-aapl-historical-financial-news-data` (mostly Yahoo Finance, UTC timestamps, listed as CC0), **AAPL headlines from 2023-11-01 to 2024-11-22**, all after gpt-4o-mini's cutoff, so the model can't "remember" what happened next. | The first build used Benzinga 2009–2020 (NVDA + JNJ), which was real but entirely inside the training window, so it was replaced. The full search is in `notes/dataset_survey.md`. |
+| D2 | Headline dataset | **Revised 2026-09-11: only real data, and it must postdate the training cutoff.** Kaggle `frankossai/apple-stock-aapl-historical-financial-news-data` (mostly Yahoo Finance, UTC timestamps, listed as CC0), **AAPL headlines from 2023-11-01 to 2024-11-22**, all after gpt-4o-mini's cutoff, so the model can't "remember" what happened next. | The first build used Benzinga 2009–2020 (NVDA + JNJ), which was real but entirely inside the training window, so it was replaced. The full search is in local notes (not in the repo). |
 | D3 | Label anchor rule | **Timestamp-aware:** the entry close must come strictly *after* publication (see §1) | Taken literally, spec §4 ("close D → close D+1") lets after-close headlines use a close that happened before the news was out. That stays inside spec §2's no-look-ahead principle but flatters the signal. The stricter rule is in the spirit of §2. |
 | D4 | Git | `git init` **inside** `signal_confidence/` | `$HOME` is itself a git repo (branch `jeannine`), so without this, commits would land in the home repo. System git is 2.23, so use `git init` then `git checkout -b main` (`init -b` is not available). |
 
@@ -155,7 +155,7 @@ Every phase ends the same way: `ruff` clean, `pytest` green, one commit. Don't s
 
 ### Phase 1: Data and labels (~1 day): ✅ done 2026-09-11 (rebuilt on AAPL post-cutoff data)
 - Raw file `apple_news_data.csv(.zip)` in `data/raw/` (gitignored). `make sample` rebuilds the committed slice and the price cache.
-- Timestamps checked against Apple's five 16:30 ET earnings releases. Handled date-only midnight-UTC rows and live-blog title rewriting. Findings are in `notes/phase1_data_audit.md`.
+- Timestamps checked against Apple's five 16:30 ET earnings releases. Handled date-only midnight-UTC rows and live-blog title rewriting. Findings are in local notes (not in the repo).
 - Sample: 150 headlines, dev 45 (2023-11 → 2024-03) and test 105 (2024-03 → 2024-11). 10-row manual audit, plus a 150/150 cross-check against unadjusted closes.
 - **Base rates differ sharply between splits:** 33% of dev directional labels are up, versus **61% of test (n = 97)**. Always-up is therefore a strong baseline on test.
 
@@ -258,7 +258,7 @@ Total ≈ 5 working days.
 | **Small n.** With 105 test items and 30–50% neutral, there may be only ~55–75 directional points, so CIs are about ±12 pp. | CIs on every number, the ECE null distribution, and framing as a method demo. Don't scale up (spec §3). |
 | **Confidence clustering.** LLMs tend to use 3–5 distinct values (0.7 / 0.8 / 0.85…), so few bins get populated. | Histogram panel, report the count of distinct values, and bins keyed on mean confidence. That alone is a useful finding. |
 | High neutral rate lowers coverage | Pre-set dev-set decision rule (Phase 3). |
-| ~~Timestamp ambiguity~~ | **Resolved in Phase 1:** UTC timestamps verified against real events, and date-only rows excluded (`notes/phase1_data_audit.md`). |
+| ~~Timestamp ambiguity~~ | **Resolved in Phase 1:** UTC timestamps verified against real events, and date-only rows excluded (details in local notes, not in the repo). |
 | Early-close days (13:00 ET) | Rare. The close is assumed to be 16:00, documented as a known approximation. |
 | LLM nondeterminism | The committed cache is the source of truth, and `--offline` reproduction is checked in Phase 5. |
 | Headline copyright (publishers own the titles) | Commit only the 150-row slice, with attribution. If that is judged too much, commit IDs plus the build script instead (reproducing then needs a Kaggle account). |

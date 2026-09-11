@@ -16,3 +16,6 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# Personal research notes (kept local)
+notes/

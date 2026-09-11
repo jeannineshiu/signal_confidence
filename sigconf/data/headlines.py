@@ -4,7 +4,7 @@ Source: Kaggle "Apple Stock (AAPL): Historical Financial News Data"
 (frankossai/apple-stock-aapl-historical-financial-news-data, CC0 as listed),
 file apple_news_data.csv — columns used: date (ISO 8601, UTC), title.
 Timestamp accuracy was checked against Apple's five 16:30 ET earnings releases
-in the sample window (notes/phase1_data_audit.md).
+in the sample window.
 
 Sampling is label-blind: which headlines are drawn depends on the trading
 calendar (to find each headline's anchor day) but never on price moves.
