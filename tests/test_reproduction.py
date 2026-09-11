@@ -44,6 +44,17 @@ def test_committed_metrics_reproduce_offline(split):
     assert_same(json.loads(json.dumps(metrics)), json.loads(committed_path.read_text()))
 
 
+def test_readme_results_block_matches_committed_metrics():
+    """The README's numbers table is exactly what the committed metrics render to."""
+    from sigconf.pipeline import README_PATH
+    from sigconf.report import summary
+
+    text = README_PATH.read_text()
+    block = summary.render_results_block(summary.read_metrics(output_paths("test")["metrics"]))
+    assert block in text
+    assert summary.replace_results_block(text, block) == text
+
+
 def test_the_comparator_is_strict_where_it_must_be():
     with pytest.raises(AssertionError):
         assert_same({"n": 31}, {"n": 30})
