@@ -1,9 +1,11 @@
 import numpy as np
+import pandas as pd
 import pytest
 from conftest import favourite_form
 from test_scoring_evaluate import _538_as_scored
 
 from sigconf.eval.calibration import reliability_table
+from sigconf.eval.corp import corp_analysis
 from sigconf.eval.evaluate import evaluate
 from sigconf.report import figures, summary
 
@@ -59,6 +61,19 @@ def test_figures_render_from_real_forecasts(tmp_path, nfl):
     for path in (cal, base):
         data = path.read_bytes()
         assert data[:8] == b"\x89PNG\r\n\x1a\n" and len(data) > 10_000
+
+
+def test_corp_figure_and_block_render_from_real_forecasts(tmp_path, nfl):
+    """Continuous 538 confidences: one PAV level per game, drawn as a line."""
+    conf, hit, _ = nfl
+    a = corp_analysis(conf, hit, n_sims=100)
+    path = figures.plot_corp_reliability(pd.DataFrame(a["curve"]), conf, tmp_path / "corp.png",
+                                         "538 NFL favourites", "subtitle")
+    data = path.read_bytes()
+    assert data[:8] == b"\x89PNG\r\n\x1a\n" and len(data) > 10_000
+    block = summary.render_corp_block({"hit_form": a, "p_up_form": a})
+    assert block.startswith(summary.CORP_START) and block.endswith(summary.CORP_END)
+    assert "permutation" in block and "simulated" in block  # both references labelled
 
 
 def test_figures_accept_a_single_bin(tmp_path):

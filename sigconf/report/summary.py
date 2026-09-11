@@ -83,6 +83,51 @@ def replace_results_block(text: str, block: str, start: str = START, end: str = 
     return head + block + tail
 
 
+CORP_START = "<!-- CORP:START -->"
+CORP_END = "<!-- CORP:END -->"
+
+
+def render_corp_block(m: dict) -> str:
+    """README tables for the CORP decomposition and the PAV-recalibrated curve."""
+    h, u = m["hit_form"], m["p_up_form"]
+    num = "{:.3f}".format
+    mcb, dsc = h["mcb"], h["dsc"]
+    mcb_null, dsc_null = mcb["perfect_calibration_null"], dsc["no_discrimination_null"]
+    n = f"n = {h['n']}"
+    lines = [
+        CORP_START,
+        "| Part of the Brier score | Value | What it would be at this n with no effect | Sample |",
+        "|---|---|---|---|",
+        f"| Miscalibration, MCB (lower is better) | **{num(mcb['value'])}** "
+        f"| {num(mcb_null['mean'])} for a perfectly calibrated forecaster (simulated; "
+        f"95th percentile {num(mcb_null['p95'])}; {_p(mcb_null['p_value'])}) | {n} |",
+        f"| Discrimination, DSC (higher is better) | **{num(dsc['value'])}** "
+        f"| {num(dsc_null['mean'])} if confidence were unrelated to being right (permutation; "
+        f"95th percentile {num(dsc_null['p95'])}; {_p(dsc_null['p_value'])}) | {n} |",
+        f"| Uncertainty, UNC | {num(h['unc'])} | fixed by the outcomes: accuracy × (1 − accuracy) "
+        f"| {n} |",
+        f"| **Brier** = MCB − DSC + UNC | **{num(h['brier'])}** | 0.250 for always saying 50% "
+        f"| {n} |",
+        "",
+        "| Stated confidence | Calls | Right | PAV-recalibrated | "
+        "Perfectly calibrated forecaster, recalibrated (95% band) |",
+        "|---|---|---|---|---|",
+    ]
+    for p in h["curve"]:
+        lines.append(f"| {p['confidence']:g} | {p['n']} | {_pct(p['hit_rate'])} "
+                     f"| {_pct(p['recalibrated'])} "
+                     f"| {_pct(p['band_low'])}–{_pct(p['band_high'])} |")
+    lines += [
+        "",
+        f"Decomposed on P(up) against the up/down label instead (same Brier "
+        f"{num(u['brier'])}): MCB {num(u['mcb']['value'])} "
+        f"({_p(u['mcb']['perfect_calibration_null']['p_value'])}), "
+        f"DSC {num(u['dsc']['value'])} ({_p(u['dsc']['no_discrimination_null']['p_value'])}).",
+        CORP_END,
+    ]
+    return "\n".join(lines)
+
+
 LOGPROB_START = "<!-- LOGPROB:START -->"
 LOGPROB_END = "<!-- LOGPROB:END -->"
 

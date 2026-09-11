@@ -102,6 +102,47 @@ def plot_confidence_comparison(
     return path
 
 
+def plot_corp_reliability(
+    curve: pd.DataFrame, confidence: np.ndarray, path: Path, title: str, subtitle: str
+) -> Path:
+    """CORP reliability diagram (top) over the distribution of stated confidence.
+
+    `curve` is corp.corp_analysis()["curve"]: one row per distinct confidence
+    with its observed hit rate, PAV-recalibrated value and consistency band.
+    """
+    x = curve["confidence"]
+    discrete = len(curve) <= 20
+    lo = min(0.5, float(x.min()) - 0.05)
+    with plt.rc_context(RC):
+        fig, (ax, hist) = plt.subplots(
+            2, 1, figsize=(6.4, 7.0), sharex=True, gridspec_kw={"height_ratios": [3, 1]}
+        )
+        ax.plot([lo, 1], [lo, 1], color=MUTED, linewidth=1.2, zorder=1)
+        ax.text(0.86, 0.875, "perfectly calibrated", color=MUTED, ha="left", va="bottom",
+                rotation=45, rotation_mode="anchor", transform_rotates_text=True, fontsize=8.5)
+        ax.fill_between(x, curve["band_low"], curve["band_high"], color=BASELINE, alpha=0.35,
+                        linewidth=0, zorder=1,
+                        label="Where a perfectly calibrated forecaster's\n"
+                              "recalibrated curve falls (95%)")
+        ax.plot(x, curve["recalibrated"], color=SERIES, linewidth=2, zorder=3,
+                marker="o" if discrete else None, markersize=7, markeredgecolor=SURFACE,
+                markeredgewidth=1.5, label="Recalibrated (PAV): the best non-decreasing fit")
+        if discrete:
+            # A ring drawn behind the PAV dot: where PAV leaves a value unchanged
+            # the dot sits inside its ring; where PAV pools, the two separate.
+            ax.scatter(x, curve["hit_rate"], s=150, facecolor="none", edgecolor=INK_2,
+                       linewidth=1.3, zorder=2, label="Observed hit rate at each stated value")
+        ax.legend(loc="upper left", frameon=False, fontsize=8.5, labelcolor=INK_2)
+        ax.set_xlim(lo, 1.0)
+        ax.set_ylim(0, 1.02)
+        ax.set_ylabel("Share of calls that were right")
+        _title(ax, title, subtitle)
+        _distribution_panel(hist, confidence, SERIES)
+        hist.set_ylabel("Calls")
+        _save(fig, path)
+    return path
+
+
 def _reliability_panel(ax, table: pd.DataFrame, colour: str) -> None:
     ax.plot([0, 1], [0, 1], color=MUTED, linewidth=1.2, zorder=1)
     # Label the reference in the empty lower-left, rotated to the line's on-screen angle.

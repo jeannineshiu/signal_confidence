@@ -55,6 +55,26 @@ def test_committed_logprob_metrics_reproduce_offline(split):
     assert_same(json.loads(json.dumps(metrics)), json.loads(committed_path.read_text()))
 
 
+@pytest.mark.parametrize("split", ["dev", "test"])
+def test_committed_corp_metrics_reproduce_offline(split):
+    from sigconf.experiments import corp_decomposition as corp
+
+    committed_path = corp.output_paths(split)["metrics"]
+    if not committed_path.exists():
+        pytest.skip(f"no committed CORP {split} metrics yet")
+    metrics, _ = corp.run(split, log=lambda _: None)
+    assert_same(json.loads(json.dumps(metrics)), json.loads(committed_path.read_text()))
+
+
+def test_readme_corp_block_matches_committed_metrics():
+    from sigconf.experiments import corp_decomposition as corp
+    from sigconf.pipeline import README_PATH
+    from sigconf.report import summary
+
+    block = summary.render_corp_block(summary.read_metrics(corp.output_paths("test")["metrics"]))
+    assert block in README_PATH.read_text()
+
+
 def test_readme_logprob_block_matches_committed_metrics():
     from sigconf.experiments import logprob_vs_verbalized as lp
     from sigconf.pipeline import README_PATH

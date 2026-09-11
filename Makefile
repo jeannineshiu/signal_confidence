@@ -1,7 +1,7 @@
 PYTHON ?= python
 SPLIT ?= test
 
-.PHONY: install sample run reproduce logprob test lint check
+.PHONY: install sample run reproduce logprob corp test lint check
 
 install:
 	$(PYTHON) -m pip install -r requirements.txt
@@ -21,10 +21,16 @@ run:
 reproduce:
 	$(PYTHON) -m sigconf.pipeline --split $(SPLIT) --offline
 	$(PYTHON) -m sigconf.experiments.logprob_vs_verbalized --split $(SPLIT) --offline
+	$(PYTHON) -m sigconf.experiments.corp_decomposition --split $(SPLIT)
 
 # Secondary analysis (PLAN.md §8): token-probability vs verbalised confidence.
 logprob:
 	$(PYTHON) -m sigconf.experiments.logprob_vs_verbalized --split $(SPLIT)
+
+# CORP reliability diagram + Brier decomposition (PLAN.md §9). Reads the committed
+# primary cache only; never calls the LLM.
+corp:
+	$(PYTHON) -m sigconf.experiments.corp_decomposition --split $(SPLIT)
 
 test:
 	$(PYTHON) -m pytest

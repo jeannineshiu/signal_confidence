@@ -282,7 +282,7 @@ Total ≈ 5 working days.
 - More tickers and walk-forward evaluation across market regimes, still restricted to post-cutoff data
 - Token-logprob confidence compared with verbalized confidence
 - Recalibration (Platt / isotonic fitted on dev, applied to test)
-- Brier decomposition (reliability / resolution / uncertainty)
+- ~~Brier decomposition (reliability / resolution / uncertainty)~~ built as the CORP analysis, §9
 - Full article text instead of headline only
 
 ---
@@ -308,3 +308,24 @@ Added after the primary result (Phase 4) was known. **It does not revise the pri
 - It is far worse calibrated than the verbalised number: ΔBrier +0.215 (CI +0.151 to +0.280), ΔECE +0.282 (CI +0.266 to +0.290). Both intervals exclude 0.
 - No detectable difference in discrimination: ΔAUROC −0.075 (CI −0.199 to +0.044). Both AUROC intervals include 0.5.
 - Re-run vs primary run: same direction on 104/105 headlines, same verbalised confidence on 98/105.
+
+---
+
+## 9. CORP reliability diagram and Brier decomposition (added 2026-09-11)
+
+Added after the primary (§3 Phase 4) and secondary (§8) results were known, so it is **not** pre-registered and **does not revise the primary result**: the binned ECE fixed in §1 stays the headline calibration number. It re-reads the same committed primary signals; no LLM call. Code: `sigconf/eval/corp.py`, runner `sigconf/experiments/corp_decomposition.py`, outputs `results/corp/{dev,test}/metrics.json` and `img/corp_reliability.png`.
+
+| Topic | Decision |
+|-------|----------|
+| Method | CORP (Dimitriadis, Gneiting & Jordan, PNAS 2021): PAV isotonic fit of hit on stated confidence, tied confidences pooled into one level. No bins, no tuning parameters. |
+| Score and form | Brier (the primary score) on `(confidence, hit)`, the form of every other calibration number here. `Brier = MCB − DSC + UNC`, exact. Robustness: the same decomposition on `(P(up), went_up)`, reported in one line. |
+| Uncertainty | MCB vs a perfectly calibrated forecaster: hit ~ Bernoulli(confidence), same confidences, 10,000 simulations (as the ECE null). DSC vs no discrimination: observed hits permuted across observed confidences, 10,000 permutations. 95% consistency band: pointwise quantiles of the PAV fit under the calibrated simulation (95% to match the rest of the README; the paper's default is 90%). |
+| No bootstrap CIs for MCB/DSC | Both are ≥ 0 and biased upward. On the test split the percentile bootstrap for DSC was 0.0006–0.049 while its permutation p was 0.10, so an interval would misread as evidence of discrimination. |
+| Reading rule | A component counts as present only if its reference p < 0.05. |
+
+**Result (test, n = 77):** Brier 0.300 = MCB 0.062 − DSC 0.012 + UNC 0.250.
+- MCB is far above the perfect-calibration reference (0.008, p < 0.001).
+- DSC is not distinguishable from no discrimination (reference 0.004, p = 0.10).
+- The P(up) form gives MCB 0.070 (p < 0.001) and DSC 0.010 (p = 0.22), the same reading.
+- The fixed bins merged 0.70 (15/34 right) with 0.75 (17/27). The order reverses on dev (10/16 vs 1/5), so this is not read as discrimination.
+- Because every stated value is over-confident, ECE with one bin per stated value equals the binned ECE (0.236). The bins did not distort ECE on this data.

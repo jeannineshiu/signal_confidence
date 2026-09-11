@@ -54,6 +54,63 @@ and 0.75 account for 61 of the 77.
   (p < 0.001), so the miscalibration is not sampling noise. This reference is a simulation-based
   significance test, not data.
 
+## Calibration and discrimination, without bins (CORP)
+
+The reliability diagram above depends on hand-set 0.1-wide bins, and fixed-width bins are a known weak
+point of calibration estimates at small n (Roelofs et al., AISTATS 2022). CORP (Dimitriadis, Gneiting &
+Jordan, PNAS 2021) removes that choice. It fits the best non-decreasing curve of hit rate on stated
+confidence (pool-adjacent-violators, PAV), so the groups come from the data, and that fit splits the
+Brier score exactly into three parts:
+- **miscalibration (MCB):** what is lost because the stated numbers are off;
+- **discrimination (DSC):** what the *ordering* of the numbers is worth, i.e. how well higher confidence
+  picks out the calls that were right;
+- **uncertainty (UNC):** fixed by the outcomes alone.
+
+MCB and DSC cannot go below zero and are biased upward at small n, because PAV also fits noise. Each is
+therefore compared with what it would be at this n with no effect. MCB is compared with a perfectly
+calibrated forecaster (simulated, as for ECE). DSC is compared with the observed hits shuffled across the
+observed confidences (a permutation of real rows). Bootstrap intervals are deliberately not shown for
+these two, because for a quantity bounded at zero they exclude zero even when there is no effect. This
+analysis was added after the results above were known. It has no free parameters to tune and does not
+revise the primary result, whose pre-registered ECE remains the headline calibration number
+(PLAN.md §9).
+
+<!-- CORP:START -->
+| Part of the Brier score | Value | What it would be at this n with no effect | Sample |
+|---|---|---|---|
+| Miscalibration, MCB (lower is better) | **0.062** | 0.008 for a perfectly calibrated forecaster (simulated; 95th percentile 0.018; p < 0.001) | n = 77 |
+| Discrimination, DSC (higher is better) | **0.012** | 0.004 if confidence were unrelated to being right (permutation; 95th percentile 0.016; p = 0.101) | n = 77 |
+| Uncertainty, UNC | 0.250 | fixed by the outcomes: accuracy × (1 − accuracy) | n = 77 |
+| **Brier** = MCB − DSC + UNC | **0.300** | 0.250 for always saying 50% | n = 77 |
+
+| Stated confidence | Calls | Right | PAV-recalibrated | Perfectly calibrated forecaster, recalibrated (95% band) |
+|---|---|---|---|---|
+| 0.65 | 11 | 27.3% | 27.3% | 36.4%–77.8% |
+| 0.7 | 34 | 44.1% | 44.1% | 55.9%–81.8% |
+| 0.75 | 27 | 63.0% | 59.4% | 63.0%–88.9% |
+| 0.8 | 5 | 40.0% | 59.4% | 65.6%–100.0% |
+
+Decomposed on P(up) against the up/down label instead (same Brier 0.300): MCB 0.070 (p < 0.001), DSC 0.010 (p = 0.219).
+<!-- CORP:END -->
+
+![CORP reliability diagram: PAV-recalibrated hit rate against stated confidence on the held-out test split, with the band a perfectly calibrated forecaster would produce and the distribution of stated confidences below](img/corp_reliability.png)
+
+- **The two problems separate, and only one is detectable.** Miscalibration (0.062) is about eight
+  times what a perfectly calibrated forecaster would show at n = 77 (0.008, p < 0.001). Discrimination
+  (0.012) cannot be told apart from confidence that is unrelated to being right (p = 0.10). The Brier
+  score is worse than always saying 50% because the miscalibration outweighs the little that the
+  ordering of the numbers adds.
+- **Every stated value is over-confident, even after recalibration.** All four recalibrated points lie
+  below the range a perfectly calibrated forecaster would produce.
+- **The bins hid a split that does not hold up.** The 0.70–0.80 bin merges the 0.70 calls (right 44%,
+  n = 34) with the 0.75 calls (63%, n = 27). That looks like discrimination, but DSC puts it within
+  noise, and on the 31 dev calls the order reverses (0.70 right 10 of 16, 0.75 right 1 of 5).
+- **The bins did not distort the ECE here.** Every stated value is over-confident, so pooling 0.70 with
+  0.75 cancels no gaps: ECE with one bin per stated value is the same 0.236. ECE's small-sample upward
+  bias is real, but it is what the simulated reference (0.061) already measures.
+- Scoring P(up) against the up/down label instead of confidence against the hit gives the same Brier and
+  the same reading (last line of the tables).
+
 ## Secondary analysis: token probability vs verbalised confidence
 
 Is the probability the model assigns *internally* to its chosen direction a better confidence than the
@@ -150,7 +207,6 @@ Re-run vs the primary run on the same 105 headlines: same direction on 104/105, 
 - Confidence from agreement across several samples at temperature > 0, a third readout to set beside
   verbalised and token probability.
 - Recalibrate (Platt / isotonic, fitted on a larger dev set) and re-test on held-out data.
-- Decompose Brier into reliability, resolution and uncertainty.
 - Full article text instead of headlines.
 
 ## Reproduce
@@ -159,8 +215,8 @@ Every figure and number above is regenerated from the committed caches, with no 
 
 ```bash
 pip install -r requirements.txt     # Python 3.11
-make reproduce                      # primary pipeline + logprob analysis, both --offline
-make test                           # 170+ tests, including an offline reproduction check
+make reproduce                      # primary pipeline + logprob + CORP analyses, all offline
+make test                           # 210+ tests, including an offline reproduction check
 ```
 
 `make run` does the same but calls the LLM for any headline missing from `data/cache/signals.jsonl`. It

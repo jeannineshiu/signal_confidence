@@ -1,0 +1,174 @@
+{
+  "accuracy": 0.4805194805194805,
+  "hit_form": {
+    "brier": 0.2999350649350649,
+    "curve": [
+      {
+        "band_high": 0.7777777777777778,
+        "band_low": 0.36363636363636365,
+        "confidence": 0.65,
+        "hit_rate": 0.2727272727272727,
+        "n": 11,
+        "recalibrated": 0.2727272727272727
+      },
+      {
+        "band_high": 0.8181818181818182,
+        "band_low": 0.5588235294117647,
+        "confidence": 0.7,
+        "hit_rate": 0.4411764705882353,
+        "n": 34,
+        "recalibrated": 0.4411764705882353
+      },
+      {
+        "band_high": 0.8888888888888888,
+        "band_low": 0.6296296296296297,
+        "confidence": 0.75,
+        "hit_rate": 0.6296296296296297,
+        "n": 27,
+        "recalibrated": 0.59375
+      },
+      {
+        "band_high": 1.0,
+        "band_low": 0.65625,
+        "confidence": 0.8,
+        "hit_rate": 0.4,
+        "n": 5,
+        "recalibrated": 0.59375
+      }
+    ],
+    "dsc": {
+      "no_discrimination_null": {
+        "mean": 0.0041755746888731135,
+        "method": "permutation: observed hits shuffled across observed confidences",
+        "n_sims": 10000,
+        "p95": 0.01570669590150106,
+        "p_value": 0.10138986101389862
+      },
+      "value": 0.012179975295903478
+    },
+    "mcb": {
+      "perfect_calibration_null": {
+        "mean": 0.007721586525723359,
+        "method": "simulation: hit ~ Bernoulli(confidence), same confidences",
+        "n_sims": 10000,
+        "p95": 0.018330272421181473,
+        "p_value": 9.999000099990002e-05
+      },
+      "value": 0.06249453087019935
+    },
+    "n": 77,
+    "n_pav_groups": 3,
+    "settings": {
+      "band": 0.95,
+      "n_sims": 10000,
+      "seed": 42
+    },
+    "unc": 0.24962050936076907
+  },
+  "p_up_form": {
+    "brier": 0.2999350649350649,
+    "curve": [
+      {
+        "band_high": 0.3793103448275862,
+        "band_low": 0.0,
+        "confidence": 0.19999999999999996,
+        "hit_rate": 1.0,
+        "n": 2,
+        "recalibrated": 0.5357142857142857
+      },
+      {
+        "band_high": 0.41379310344827586,
+        "band_low": 0.0,
+        "confidence": 0.25,
+        "hit_rate": 0.6666666666666666,
+        "n": 9,
+        "recalibrated": 0.5357142857142857
+      },
+      {
+        "band_high": 0.4642857142857143,
+        "band_low": 0.13793103448275862,
+        "confidence": 0.30000000000000004,
+        "hit_rate": 0.4444444444444444,
+        "n": 18,
+        "recalibrated": 0.5357142857142857
+      },
+      {
+        "band_high": 0.6,
+        "band_low": 0.2,
+        "confidence": 0.35,
+        "hit_rate": 0.8,
+        "n": 10,
+        "recalibrated": 0.5357142857142857
+      },
+      {
+        "band_high": 0.8285714285714286,
+        "band_low": 0.225,
+        "confidence": 0.65,
+        "hit_rate": 1.0,
+        "n": 1,
+        "recalibrated": 0.5357142857142857
+      },
+      {
+        "band_high": 0.8529411764705882,
+        "band_low": 0.5,
+        "confidence": 0.7,
+        "hit_rate": 0.3125,
+        "n": 16,
+        "recalibrated": 0.5357142857142857
+      },
+      {
+        "band_high": 0.9142857142857143,
+        "band_low": 0.6,
+        "confidence": 0.75,
+        "hit_rate": 0.7777777777777778,
+        "n": 18,
+        "recalibrated": 0.7619047619047619
+      },
+      {
+        "band_high": 1.0,
+        "band_low": 0.6666666666666666,
+        "confidence": 0.8,
+        "hit_rate": 0.6666666666666666,
+        "n": 3,
+        "recalibrated": 0.7619047619047619
+      }
+    ],
+    "dsc": {
+      "no_discrimination_null": {
+        "mean": 0.006299288571723534,
+        "method": "permutation: observed hits shuffled across observed confidences",
+        "n_sims": 10000,
+        "p95": 0.01928257528906882,
+        "p_value": 0.2186781321867813
+      },
+      "value": 0.010147860797211472
+    },
+    "mcb": {
+      "perfect_calibration_null": {
+        "mean": 0.013932074274186027,
+        "method": "simulation: hit ~ Bernoulli(confidence), same confidences",
+        "n_sims": 10000,
+        "p95": 0.026910717579166736,
+        "p_value": 0.00019998000199980003
+      },
+      "value": 0.06957019171304887
+    },
+    "n": 77,
+    "n_pav_groups": 2,
+    "settings": {
+      "band": 0.95,
+      "n_sims": 10000,
+      "seed": 42
+    },
+    "unc": 0.24051273401922754
+  },
+  "run": {
+    "llm_calls": 105,
+    "llm_cost_usd": 0.00624615,
+    "model": "gpt-4o-mini-2024-07-18",
+    "prompt_sha": "a92bc2e60621cb71",
+    "prompt_version": "v1",
+    "split": "test"
+  },
+  "split": "test"
+}
