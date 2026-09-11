@@ -80,8 +80,18 @@ def plot_calibration_curve(
         ax.set_ylabel("Empirical accuracy (share of calls that were right)")
         _title(ax, title, "Points: bins of stated confidence · bars: Wilson 95% interval")
 
-        hist.hist(confidence, bins=np.linspace(0, 1, 41), color=SERIES, edgecolor=SURFACE,
-                  linewidth=1.0)
+        values, counts = np.unique(np.asarray(confidence, dtype=float), return_counts=True)
+        if len(values) <= 20:
+            # Verbalised confidence is discrete: one bar per value actually stated,
+            # centred on it (a binned histogram would misplace values on bin edges).
+            hist.bar(values, counts, width=0.018, color=SERIES, zorder=2)
+            for v, k in zip(values, counts, strict=True):
+                hist.annotate(f"{v:g}", (v, k), xytext=(0, 3), textcoords="offset points",
+                              ha="center", color=INK_2, fontsize=8)
+            hist.set_ylim(0, counts.max() * 1.25)
+        else:
+            hist.hist(confidence, bins=np.linspace(0, 1, 41), color=SERIES, edgecolor=SURFACE,
+                      linewidth=1.0)
         hist.set_xlabel("Stated confidence")
         hist.set_ylabel("Calls")
         hist.grid(axis="x", visible=False)

@@ -68,6 +68,39 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def run_split(
+    split_name: str,
+    offline: bool = False,
+    retry_api_errors: bool = False,
+    client_factory=OpenAIClient,
+    log=print,
+) -> tuple[dict, pd.DataFrame]:
+    """Stages 1–3 for one split → (metrics, scored rows). Writes nothing but the cache."""
+    labeled = load_labeled(offline=offline)
+    split = labeled[labeled["split"] == split_name].reset_index(drop=True)
+    log(f"[1/4] labels ({split_name}): {len(split)} headlines, "
+        f"{split['label'].value_counts().to_dict()}")
+
+    settings = config.llm_settings()
+    signals = run_signals(split, settings, client_factory, SignalCache(), offline=offline,
+                          retry_api_errors=retry_api_errors, log=log)
+    log(f"[2/4] signals ({settings.model}, prompt {PROMPT_VERSION}): "
+        f"{signals['status'].value_counts().to_dict()}")
+
+    scored = score(split, signals)
+    metrics = evaluate(scored)
+    metrics["run"] = {
+        "split": split_name,
+        "model": settings.model,
+        "prompt_version": PROMPT_VERSION,
+        "prompt_sha": PROMPT_SHA,
+        "llm_calls": int(signals["attempts"].sum()),
+        "llm_cost_usd": float(signals["cost_usd"].sum()),
+    }
+    log(f"[3/4] scored: {metrics['funnel']}")
+    return metrics, scored
+
+
 def main(argv: list[str] | None = None, env_file: Path | None = config.ROOT / ".env") -> int:
     args = parse_args(argv)
     if env_file is not None and env_file.exists():
@@ -75,38 +108,17 @@ def main(argv: list[str] | None = None, env_file: Path | None = config.ROOT / ".
 
         load_dotenv(env_file)  # only here — importing sigconf never reads .env
 
-    labeled = load_labeled(offline=args.offline)
-    split = labeled[labeled["split"] == args.split].reset_index(drop=True)
-    print(f"[1/4] labels ({args.split}): {len(split)} headlines, "
-          f"{split['label'].value_counts().to_dict()}")
-
-    settings = config.llm_settings()
-    signals = run_signals(split, settings, OpenAIClient, SignalCache(),
-                          offline=args.offline, retry_api_errors=args.retry_api_errors)
-    print(f"[2/4] signals ({settings.model}, prompt {PROMPT_VERSION}): "
-          f"{signals['status'].value_counts().to_dict()}")
-
-    scored = score(split, signals)
-    metrics = evaluate(scored)
-    metrics["run"] = {
-        "split": args.split,
-        "model": settings.model,
-        "prompt_version": PROMPT_VERSION,
-        "prompt_sha": PROMPT_SHA,
-        "llm_calls": int(signals["attempts"].sum()),
-        "llm_cost_usd": float(signals["cost_usd"].sum()),
-    }
-    print(f"[3/4] scored: {metrics['funnel']}")
+    metrics, scored = run_split(args.split, args.offline, args.retry_api_errors)
 
     paths = output_paths(args.split)
     summary.write_metrics(metrics, paths["metrics"])
     rows = scored[scored["state"] == "scored"]
     conf = rows["confidence"].to_numpy(dtype=float)
     table = reliability_table(conf, rows["hit"].to_numpy(dtype=float))
-    label = "held-out test" if args.split == "test" else "dev split (prompt iteration only)"
+    label = "held-out test" if args.split == "test" else "dev split"
     figures.plot_calibration_curve(table, conf, paths["calibration"],
-                                   f"LLM confidence vs outcome · AAPL, {label}")
-    figures.plot_baselines(metrics, paths["baselines"], f"Directional accuracy · AAPL, {label}")
+                                   f"LLM confidence vs outcome · AAPL {label}")
+    figures.plot_baselines(metrics, paths["baselines"], f"Directional accuracy · AAPL {label}")
 
     block = summary.render_results_block(metrics)
     if args.split == "test" and README_PATH.exists():
