@@ -15,3 +15,6 @@ python-dotenv==1.2.3
 # ── Dev ───────────────────────────────────────────────────────────────────────
 pytest==9.1.1
 ruff==0.16.7
+# Test-only independent reference: tests check our Brier / reliability table
+# against scikit-learn on real FiveThirtyEight forecasts. sigconf never imports it.
+scikit-learn==1.9.1

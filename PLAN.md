@@ -159,7 +159,12 @@ Every phase ends the same way: `ruff` clean, `pytest` green, one commit. Don't s
 - Sample: 150 headlines, dev 45 (2023-11 → 2024-03) and test 105 (2024-03 → 2024-11). 10-row manual audit, plus a 150/150 cross-check against unadjusted closes.
 - **Base rates differ sharply between splits:** 33% of dev directional labels are up, versus **61% of test (n = 97)**. Always-up is therefore a strong baseline on test.
 
-### Phase 2: Evaluation harness (~1.5 days), built before any LLM call
+### Phase 2: Evaluation harness (~1.5 days), built before any LLM call: ✅ done 2026-09-11
+Done: `eval/{baselines,calibration,brier,uncertainty,scoring,evaluate}.py` and `report/{figures,summary}.py`, with 60+ tests on real 538 data.
+- Hand-computed Brier/ECE on 5 real NFL playoff games matches to 1e-12.
+- Reliability table, ECE and Brier equal scikit-learn/numpy on all 8,886 NBA games.
+- Real data caught a bug toy data would have missed: `math.comb` overflows past n ≈ 1,000, so the binomial now runs in log space.
+- Additions beyond the original plan: an exact McNemar test (LLM vs always-up on the same items) and a `p < 0.001` formatter (a p-value is never printed as 0).
 The harness is the deliverable. It is built and validated **before any LLM call**, so the metrics can't be shaped around the results. **No synthetic data (confirmed 2026-09-11):** the harness is validated on real forecasts.
 - `calibration.py`, `brier.py`, `baselines.py`, `uncertainty.py`, `scoring.py`, per §1 and §2.
 - Real-data validation using **FiveThirtyEight `checking-our-work-data`** (CC BY 4.0: real published pre-game win probabilities and results). Commit `nba_games.csv` and `nfl_games.csv` under `tests/fixtures/538/` with attribution.
