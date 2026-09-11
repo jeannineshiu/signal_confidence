@@ -60,47 +60,86 @@ def plot_calibration_curve(
         fig, (ax, hist) = plt.subplots(
             2, 1, figsize=(6.4, 7.0), sharex=True, gridspec_kw={"height_ratios": [3, 1]}
         )
-        ax.plot([0, 1], [0, 1], color=MUTED, linewidth=1.2, zorder=1)
-        # Label the reference in the empty lower-left, rotated to the line's on-screen angle.
-        ax.text(0.12, 0.14, "perfectly calibrated", color=MUTED, ha="left", va="bottom",
-                rotation=45, rotation_mode="anchor", transform_rotates_text=True, fontsize=8.5)
-
-        x, y = table["mean_confidence"], table["accuracy"]
-        yerr = [y - table["ci_low"], table["ci_high"] - y]
-        ax.errorbar(x, y, yerr=yerr, fmt="none", ecolor=SERIES, elinewidth=1.4, capsize=0,
-                    alpha=0.55, zorder=2)
-        ax.plot(x, y, color=SERIES, linewidth=2, zorder=3)
-        ax.scatter(x, y, s=64, color=SERIES, edgecolor=SURFACE, linewidth=2, zorder=4)
-        for xi, yi, n in zip(x, y, table["n"], strict=True):
-            ax.annotate(f"n={n}", (xi, yi), xytext=(7, -3), textcoords="offset points",
-                        color=INK_2, fontsize=8.5)
-
-        ax.set_xlim(0, 1.0)
-        ax.set_ylim(0, 1.02)
+        _reliability_panel(ax, table, SERIES)
         ax.set_ylabel("Empirical accuracy (share of calls that were right)")
         _title(ax, title, "Points: bins of stated confidence · bars: Wilson 95% interval")
-
-        values, counts = np.unique(np.asarray(confidence, dtype=float), return_counts=True)
-        if len(values) <= 20:
-            # Verbalised confidence is discrete: one bar per value actually stated,
-            # centred on it (a binned histogram would misplace values on bin edges).
-            hist.bar(values, counts, width=0.018, color=SERIES, zorder=2)
-            for v, k in zip(values, counts, strict=True):
-                hist.annotate(f"{v:g}", (v, k), xytext=(0, 3), textcoords="offset points",
-                              ha="center", color=INK_2, fontsize=8)
-            hist.set_ylim(0, counts.max() * 1.25)
-        else:
-            hist.hist(confidence, bins=np.linspace(0, 1, 41), color=SERIES, edgecolor=SURFACE,
-                      linewidth=1.0)
-        hist.set_xlabel("Stated confidence")
+        _distribution_panel(hist, confidence, SERIES)
         hist.set_ylabel("Calls")
-        hist.grid(axis="x", visible=False)
-
-        fig.tight_layout()
-        path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(path, dpi=160, metadata={"Software": None})
-        plt.close(fig)
+        _save(fig, path)
     return path
+
+
+def plot_confidence_comparison(
+    panels: list[tuple[str, pd.DataFrame, np.ndarray, str]], path: Path, title: str,
+    subtitle: str,
+) -> Path:
+    """Small multiples: one column per confidence readout of the same calls.
+
+    Each panel is (label, reliability table, confidences, colour). Same axes in
+    every column, so the columns can be compared by eye.
+    """
+    with plt.rc_context(RC):
+        fig, axes = plt.subplots(
+            2, len(panels), figsize=(5.2 * len(panels), 7.0), sharex=True, sharey="row",
+            gridspec_kw={"height_ratios": [3, 1]}, squeeze=False,
+        )
+        for col, (label, table, confidence, colour) in enumerate(panels):
+            ax, hist = axes[0, col], axes[1, col]
+            _reliability_panel(ax, table, colour)
+            ax.text(0, 1.02, label, transform=ax.transAxes, color=INK, fontsize=10,
+                    fontweight="bold", va="bottom")
+            _distribution_panel(hist, confidence, colour)
+        axes[0, 0].set_ylabel("Empirical accuracy")
+        axes[1, 0].set_ylabel("Calls")
+        fig.suptitle(title, x=0.01, ha="left", fontsize=12, fontweight="bold", color=INK)
+        fig.text(0.01, 0.935, subtitle, ha="left", color=INK_2, fontsize=8.5)
+        fig.tight_layout(rect=(0, 0, 1, 0.92))
+        _save(fig, path)
+    return path
+
+
+def _reliability_panel(ax, table: pd.DataFrame, colour: str) -> None:
+    ax.plot([0, 1], [0, 1], color=MUTED, linewidth=1.2, zorder=1)
+    # Label the reference in the empty lower-left, rotated to the line's on-screen angle.
+    ax.text(0.12, 0.14, "perfectly calibrated", color=MUTED, ha="left", va="bottom",
+            rotation=45, rotation_mode="anchor", transform_rotates_text=True, fontsize=8.5)
+
+    x, y = table["mean_confidence"], table["accuracy"]
+    yerr = [y - table["ci_low"], table["ci_high"] - y]
+    ax.errorbar(x, y, yerr=yerr, fmt="none", ecolor=colour, elinewidth=1.4, capsize=0,
+                alpha=0.55, zorder=2)
+    ax.plot(x, y, color=colour, linewidth=2, zorder=3)
+    ax.scatter(x, y, s=64, color=colour, edgecolor=SURFACE, linewidth=2, zorder=4)
+    for xi, yi, n in zip(x, y, table["n"], strict=True):
+        ax.annotate(f"n={n}", (xi, yi), xytext=(7, -3), textcoords="offset points",
+                    color=INK_2, fontsize=8.5)
+    ax.set_xlim(0, 1.0)
+    ax.set_ylim(0, 1.02)
+
+
+def _distribution_panel(hist, confidence: np.ndarray, colour: str) -> None:
+    values, counts = np.unique(np.asarray(confidence, dtype=float), return_counts=True)
+    if len(values) <= 20:
+        # Verbalised confidence is discrete: one bar per value actually stated,
+        # centred on it (a binned histogram would misplace values on bin edges).
+        hist.bar(values, counts, width=0.018, color=colour, zorder=2)
+        for v, k in zip(values, counts, strict=True):
+            hist.annotate(f"{v:g}", (v, k), xytext=(0, 3), textcoords="offset points",
+                          ha="center", color=INK_2, fontsize=8)
+        hist.set_ylim(0, counts.max() * 1.25)
+    else:
+        hist.hist(confidence, bins=np.linspace(0, 1, 41), color=colour, edgecolor=SURFACE,
+                  linewidth=1.0)
+    hist.set_xlabel("Stated confidence")
+    hist.grid(axis="x", visible=False)
+
+
+def _save(fig, path: Path) -> None:
+    if not fig.get_suptitle():  # figures with a suptitle lay themselves out
+        fig.tight_layout()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=160, metadata={"Software": None})
+    plt.close(fig)
 
 
 def _title(ax, title: str, subtitle: str) -> None:

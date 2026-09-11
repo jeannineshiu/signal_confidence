@@ -21,6 +21,8 @@ RAW_DIR = DATA_DIR / "raw"
 SAMPLE_PATH = DATA_DIR / "sample" / "headlines.csv"
 CACHE_DIR = DATA_DIR / "cache"
 SIGNALS_CACHE_PATH = CACHE_DIR / "signals.jsonl"
+# Secondary analysis (PLAN.md §8): same frozen prompt re-run with logprobs.
+LOGPROB_CACHE_PATH = CACHE_DIR / "signals_logprob.jsonl"
 RESULTS_DIR = ROOT / "results"
 IMG_DIR = ROOT / "img"
 

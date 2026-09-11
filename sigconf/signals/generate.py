@@ -22,6 +22,7 @@ from pydantic import ValidationError
 from sigconf.config import LLM_TRAINING_CUTOFFS, SAMPLE_START, SIGNALS_CACHE_PATH, LLMSettings
 from sigconf.signals.budget import CostGuard
 from sigconf.signals.client import LLMCallError, LLMClient
+from sigconf.signals.logprob import direction_distribution, logprob_confidence
 from sigconf.signals.prompt import (
     CORRECTION_TEMPLATE,
     PROMPT_SHA,
@@ -51,7 +52,12 @@ def _short_error(err: ValidationError) -> str:
 
 
 def generate_signal(
-    client: LLMClient, guard: CostGuard, item_id: str, ticker: str, headline: str
+    client: LLMClient,
+    guard: CostGuard,
+    item_id: str,
+    ticker: str,
+    headline: str,
+    with_logprobs: bool = False,
 ) -> dict:
     user = render_user(ticker, headline)
     record = {
@@ -65,7 +71,7 @@ def generate_signal(
         guard.authorize(SYSTEM_PROMPT, message)  # raises BudgetExceeded → stops the batch
         record["attempts"] = attempt
         try:
-            completion = client.complete(SYSTEM_PROMPT, message)
+            completion = client.complete(SYSTEM_PROMPT, message, logprobs=with_logprobs)
         except LLMCallError as exc:
             guard.record(0, 0)  # a failed call still counts against the call cap
             return {**record, "status": "api_error", "error": str(exc)}
@@ -84,9 +90,31 @@ def generate_signal(
             record["error"] = _short_error(exc)
             message = user + "\n\n" + CORRECTION_TEMPLATE.format(error=record["error"])
             continue
-        return {**record, "status": "ok", "error": None, **signal.model_dump()}
+        ok = {**record, "status": "ok", "error": None, **signal.model_dump()}
+        return {**ok, **_logprob_fields(completion, signal.direction)} if with_logprobs else ok
 
     return {**record, "status": "parse_failure"}
+
+
+def _logprob_fields(completion, direction: str) -> dict:
+    """Token-probability confidence for the reply that validated (PLAN.md §8)."""
+    try:
+        if not completion.token_logprobs:
+            raise ValueError("no logprobs returned")
+        dist = direction_distribution(completion.token_logprobs)
+        if dist["chosen"] != direction:
+            raise ValueError(f"token says {dist['chosen']!r}, parsed reply says {direction!r}")
+    except ValueError as exc:
+        return {"logprob_confidence": None, "logprob_error": str(exc)}
+    conf, opposite_listed = logprob_confidence(dist)
+    return {
+        "logprob_confidence": conf,
+        "logprob_error": None,
+        "opposite_in_top_k": opposite_listed,
+        "direction_p": dist["p"],
+        "direction_captured_mass": dist["captured_mass"],
+        "direction_top_logprobs": dist["top"],
+    }
 
 
 class SignalCache:
@@ -120,6 +148,7 @@ def run_signals(
     offline: bool = False,
     retry_api_errors: bool = False,
     log: Callable[[str], None] = print,
+    with_logprobs: bool = False,
 ) -> pd.DataFrame:
     """One signal record per item: from the cache where possible, else the LLM.
 
@@ -145,7 +174,8 @@ def run_signals(
         log(f"calling {settings.model} for {len(pending)} item(s); worst case ${worst:.4f}")
         client = client_factory(settings.model)
         for row in pending.itertuples():
-            cache.append(generate_signal(client, guard, row.id, row.ticker, row.headline))
+            cache.append(generate_signal(client, guard, row.id, row.ticker, row.headline,
+                                         with_logprobs=with_logprobs))
         log(f"done: {guard.calls} call(s), ${guard.spent_usd:.4f} "
             f"({guard.input_tokens} in / {guard.output_tokens} out tokens)")
 

@@ -284,3 +284,21 @@ Total ≈ 5 working days.
 - Recalibration (Platt / isotonic fitted on dev, applied to test)
 - Brier decomposition (reliability / resolution / uncertainty)
 - Full article text instead of headline only
+
+---
+
+## 8. Secondary analysis: token-probability vs verbalised confidence (pre-registered 2026-09-11)
+
+Added after the primary result (Phase 4) was known. **It does not revise the primary result.** The definitions below are fixed in code (`sigconf/signals/logprob.py`, `sigconf/eval/compare.py`) and tagged `logprob-preregistered` before its test run.
+
+| Topic | Decision |
+|-------|----------|
+| Question | Is the probability the model gives its own direction token a better-calibrated or more discriminating confidence than the number it writes? |
+| Calls | Frozen prompt v1 and the same generation params, re-run with `logprobs=True, top_logprobs=20`. This returns token probabilities and does not change decoding. Separate cache: `data/cache/signals_logprob.jsonl`. |
+| Token confidence | At the direction-value token: P(label) = summed probability of listed alternatives that can only begin that label. Confidence = P(chosen) / (P(bullish) + P(bearish)), in [0.5, 1]. If the opposite label is outside the top 20, it is counted as 0 and flagged as an upper bound. Neutral calls have no directional confidence. |
+| Pairing | Both confidences come from the **same reply**, so direction, hits and accuracy are identical. Items: that reply's directional calls with a non-flat label and an extractable token probability. Missing token probabilities are counted, never imputed. |
+| Metrics | For each readout: Brier, ECE (+ perfect-calibration simulated null), AUROC (confidence vs hit), mean confidence minus accuracy, and number of distinct values. Differences (token − verbalised): paired bootstrap 95% CI (10,000 resamples of the same items for both). |
+| Reading rule | A difference is only called a difference if its paired 95% CI excludes 0. Otherwise it is reported as "no detectable difference at n = …". |
+| Stability | Also report agreement between this re-run and the primary run: the same direction and the same verbalised confidence on the same headlines. Temperature 0 is not deterministic. |
+| Order | Dev split first, used only to check the extraction mechanics (captured mass, errors), not to tune anything. Then tag, then the test split once. |
+| Validation | AUROC equals scikit-learn on real 538 data (with and without ties). Extraction is tested on two real captured API replies. A readout compared with itself gives exactly 0 difference. |

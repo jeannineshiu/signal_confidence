@@ -34,7 +34,7 @@ class FakeClient:
         self.model = model
         self.calls: list[str] = []
 
-    def complete(self, system, user):
+    def complete(self, system, user, logprobs=False):
         self.calls.append(user)
         reply = self.script.pop(0) if self.script else GOOD
         if isinstance(reply, Exception):

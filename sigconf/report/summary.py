@@ -74,10 +74,63 @@ def render_results_block(m: dict) -> str:
     return "\n".join(lines)
 
 
-def replace_results_block(text: str, block: str) -> str:
+def replace_results_block(text: str, block: str, start: str = START, end: str = END) -> str:
     """Swap the text between the markers (inclusive) for `block`."""
-    if text.count(START) != 1 or text.count(END) != 1 or text.index(START) > text.index(END):
-        raise ValueError("README must contain exactly one RESULTS:START … RESULTS:END pair")
-    head, rest = text.split(START, 1)
-    _, tail = rest.split(END, 1)
+    if text.count(start) != 1 or text.count(end) != 1 or text.index(start) > text.index(end):
+        raise ValueError(f"README must contain exactly one {start} … {end} pair")
+    head, rest = text.split(start, 1)
+    _, tail = rest.split(end, 1)
     return head + block + tail
+
+
+LOGPROB_START = "<!-- LOGPROB:START -->"
+LOGPROB_END = "<!-- LOGPROB:END -->"
+
+
+def render_logprob_block(m: dict) -> str:
+    """README table for the secondary analysis (token probability vs verbalised)."""
+    c = m["comparison"]
+    num = "{:.3f}".format
+
+    def row(label: str, s: dict) -> str:
+        e, a = s["ece"], s["auroc"]
+        auc = "n/a" if a["value"] is None else f"{num(a['value'])} ({_ci(a['ci95'], num)})"
+        return (f"| {label} | {_pct(s['mean_confidence'])} "
+                f"| {num(s['brier']['value'])} ({_ci(s['brier']['ci95'], num)}) "
+                f"| {num(e['value'])} (perfect-calibration reference "
+                f"{num(e['perfect_calibration_null']['mean'])}; "
+                f"{_p(e['perfect_calibration_null']['p_value'])}) | {auc} |")
+
+    d = c["logprob_minus_verbalized"]
+
+    def diff(stat: str) -> str:
+        v = d[stat]
+        if v["value"] is None:
+            return "n/a"
+        return f"{v['value']:+.3f} ({_ci(v['ci95'], lambda x: f'{x:+.3f}')})"
+
+    agree = m["rerun_vs_primary_run"]
+    lines = [
+        LOGPROB_START,
+        "| Confidence readout | Mean confidence | Brier (lower is better) | ECE | "
+        "AUROC (0.5 = chance) |",
+        "|---|---|---|---|---|",
+        row("Verbalised (the number in the reply)", c["verbalized"]),
+        row("Token probability of the chosen direction", c["logprob"]),
+        f"| **Difference**, token − verbalised (paired bootstrap) | "
+        f"{c['logprob']['mean_confidence'] - c['verbalized']['mean_confidence']:+.1%} "
+        f"| {diff('brier')} | {diff('ece')} | {diff('auroc')} |",
+        "",
+        f"Same {c['n']} directional calls for both readouts (accuracy {_pct(c['accuracy'])} "
+        f"for both, since both come from the same reply). "
+        f"Token probability ≥ 0.99 on {_pct(c['logprob']['share_at_or_above_0.99'])} of calls; "
+        f"opposite direction outside the top-20 alternatives on "
+        f"{m['opposite_not_in_top_k']} call(s) (an upper bound there); "
+        f"token probability unavailable on {m['logprob_missing']} call(s).",
+        "",
+        f"Re-run vs the primary run on the same {agree['n']} headlines: same direction on "
+        f"{agree['direction_same']}, same verbalised confidence on "
+        f"{agree['verbalized_confidence_same']}.",
+        LOGPROB_END,
+    ]
+    return "\n".join(lines)
