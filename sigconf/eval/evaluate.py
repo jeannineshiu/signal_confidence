@@ -53,7 +53,7 @@ def evaluate(
         "baselines": {
             "coin_flip": {
                 "value": 0.5,
-                "range95_at_n": list(baselines.binomial_central_interval(n, 0.5)),
+                "range95_at_n": list(baselines.binomial_central_interval(n)),
             },
             "always_up_same_items": always_up_same,
             "always_up_all_directional_labels": always_up_all,

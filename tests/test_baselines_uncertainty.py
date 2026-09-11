@@ -36,19 +36,20 @@ def test_wilson_interval_known_values():
 
 def test_exact_binomial_two_sided_p():
     # P(X ≥ 8) for Bin(10, ½) = (45 + 10 + 1) / 1024; doubled by symmetry.
-    assert binomial_two_sided_p(8, 10) == pytest.approx(112 / 1024)
-    assert binomial_two_sided_p(10, 10) == pytest.approx(2 / 1024)
-    assert binomial_two_sided_p(5, 10) == pytest.approx(1.0, rel=1e-12)
+    # Integer arithmetic: these are exact, not approximate.
+    assert binomial_two_sided_p(8, 10) == 112 / 1024
+    assert binomial_two_sided_p(10, 10) == 2 / 1024
+    assert binomial_two_sided_p(5, 10) == 1.0
 
 
-def test_binomial_pmf_matches_exact_integers_and_survives_large_n():
-    from sigconf.eval.baselines import binomial_pmf
+@pytest.mark.parametrize(("k", "n"), [(16, 31), (8, 31), (10, 12), (14, 43), (1212, 1882),
+                                      (941, 1882)])
+def test_binomial_p_matches_scipy_including_real_sample_sizes(k, n):
+    # Independent reference (scipy ships with scikit-learn, test-only).
+    # (1212, 1882) is the real NFL favourites count that overflowed a float C(n, k).
+    from scipy.stats import binomtest
 
-    assert binomial_pmf(3, 10, 0.5) == pytest.approx(math.comb(10, 3) / 1024, rel=1e-12)
-    # n = 1,882 (the real NFL sample) overflowed the naive C(n, k)·p^k form.
-    exact = math.comb(1882, 941) / 2**1882  # exact big-integer arithmetic
-    assert binomial_pmf(941, 1882, 0.5) == pytest.approx(exact, rel=1e-9)
-    assert sum(binomial_pmf(k, 1882, 0.5) for k in range(1883)) == pytest.approx(1.0, rel=1e-9)
+    assert binomial_two_sided_p(k, n) == pytest.approx(binomtest(k, n, 0.5).pvalue, rel=1e-9)
 
 
 def test_coin_flip_range_is_the_central_95_percent_of_binomial():

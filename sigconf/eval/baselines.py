@@ -6,6 +6,7 @@ against hand-computed values. No simulation happens in this module.
 """
 
 import math
+from fractions import Fraction
 
 import numpy as np
 
@@ -25,33 +26,37 @@ def wilson_interval(k: int, n: int, z: float = Z95) -> tuple[float, float]:
     return max(0.0, centre - half), min(1.0, centre + half)
 
 
-def binomial_pmf(k: int, n: int, p: float) -> float:
-    """Computed in log space: C(n, k) overflows a float beyond n ≈ 1,000."""
-    if not 0 < p < 1:
-        raise ValueError("p must lie strictly between 0 and 1")
-    log_comb = math.lgamma(n + 1) - math.lgamma(k + 1) - math.lgamma(n - k + 1)
-    return math.exp(log_comb + k * math.log(p) + (n - k) * math.log1p(-p))
+# Every binomial question here is about a fair coin (p = ½): accuracy vs
+# guessing, and McNemar's discordant pairs. Then P(X = k) = C(n, k) / 2ⁿ, which
+# Python evaluates *exactly* with integers — no overflow at any n, no libm
+# rounding, so p-values are bit-identical on every platform (a log-space
+# version differed between macOS and Linux in the last digit).
 
 
-def binomial_two_sided_p(k: int, n: int, p: float = 0.5) -> float:
-    """Exact two-sided binomial test: total probability of outcomes no more
-    likely than the observed one (the "minlike" convention)."""
-    if n <= 0 or not 0 <= k <= n:
+def _fair_coin_counts(n: int) -> list[int]:
+    if n <= 0:
+        raise ValueError("n must be positive")
+    return [math.comb(n, i) for i in range(n + 1)]
+
+
+def binomial_two_sided_p(k: int, n: int) -> float:
+    """Exact two-sided test of k successes in n fair-coin trials: total
+    probability of outcomes no more likely than the observed one."""
+    counts = _fair_coin_counts(n)
+    if not 0 <= k <= n:
         raise ValueError(f"invalid k={k}, n={n}")
-    observed = binomial_pmf(k, n, p)
-    pmfs = [binomial_pmf(i, n, p) for i in range(n + 1)]
-    return min(1.0, sum(q for q in pmfs if q <= observed * (1 + 1e-7)))
+    observed = counts[k]
+    return min(1.0, sum(c for c in counts if c <= observed) / 2**n)
 
 
-def binomial_central_interval(n: int, p: float = 0.5, alpha: float = 0.05) -> tuple[float, float]:
-    """Central (1 - alpha) range of k/n for k ~ Binomial(n, p).
-
-    For p = 0.5 this is the range a coin-flipping forecaster's accuracy falls
-    in at this sample size — the honest "random guess" band.
-    """
-    cdf = np.cumsum([binomial_pmf(i, n, p) for i in range(n + 1)])
-    lo = int(np.searchsorted(cdf, alpha / 2 - 1e-12))
-    hi = int(np.searchsorted(cdf, 1 - alpha / 2 - 1e-12))
+def binomial_central_interval(n: int, alpha: float = 0.05) -> tuple[float, float]:
+    """Central (1 - alpha) range of k/n for k ~ Binomial(n, ½): where a
+    coin-flipping forecaster's accuracy falls at this sample size."""
+    cumulative = np.cumsum(np.array(_fair_coin_counts(n), dtype=object))
+    total = 2**n
+    tail = Fraction(str(alpha)) / 2
+    lo = next(i for i, c in enumerate(cumulative) if c >= tail * total)
+    hi = next(i for i, c in enumerate(cumulative) if c >= (1 - tail) * total)
     return lo / n, hi / n
 
 
@@ -69,7 +74,7 @@ def accuracy_summary(hits) -> dict:
         "n": n,
         "value": k / n,
         "ci95": [lo, hi],
-        "p_vs_coin_flip": binomial_two_sided_p(k, n, 0.5),
+        "p_vs_coin_flip": binomial_two_sided_p(k, n),
     }
 
 
@@ -86,5 +91,5 @@ def mcnemar_exact(hits_a, hits_b) -> dict:
         raise ValueError("forecasters must be scored on the same items")
     a_only, b_only = int((a & ~b).sum()), int((~a & b).sum())
     n = a_only + b_only
-    p = 1.0 if n == 0 else binomial_two_sided_p(a_only, n, 0.5)
+    p = 1.0 if n == 0 else binomial_two_sided_p(a_only, n)
     return {"a_only": a_only, "b_only": b_only, "p_value": p}
