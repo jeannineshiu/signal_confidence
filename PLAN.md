@@ -180,7 +180,13 @@ The harness is the deliverable. It is built and validated **before any LLM call*
 - `report/summary.py`: `metrics.json` plus the README block renderer.
 - **Exit:** the harness reproduces the hand-computed and scikit-learn values on real 538 data, and renders both figures from it.
 
-### Phase 3: Signal generation (~1 day)
+### Phase 3: Signal generation (~1 day): code ✅, dev run ✅ 2026-09-11, prompt freeze pending
+Dev run, prompt v1, `gpt-4o-mini-2024-07-18` (model pinned to the dated snapshot, since the bare alias can be repointed). 45 calls, $0.0027. All 45 replies valid on the first attempt.
+- Funnel: 12 neutral (27%, under the 60% trigger) and 2 flat, leaving 31 scored.
+- Only 5 distinct confidence values (0.5 / 0.65 / 0.7 / 0.75 / 0.8), with 0.7 used 17 times.
+- Leans bullish: 21 bullish vs 12 bearish. On dev (a bearish period), 13 of 19 bullish calls were wrong.
+- Accuracy 51.6% against mean confidence 70.6%, and every bin is below the diagonal. The top misses are "positive-sentiment" headlines (Oscar nominations, "most valuable company again").
+- Neither pre-registered iteration trigger fired (neutral > 60%, unexplained parse failures). Tuning the prompt on 31 scored items would fit noise.
 - Build `schema.py`, `prompt.py`, `client.py`, `budget.py`, `generate.py` and the JSONL cache, test-first with a `FakeClient` (§4).
 - **Dev run only:** `make run SPLIT=dev` (~45 calls, cents). Look at:
   - neutral rate
