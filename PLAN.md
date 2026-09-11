@@ -302,3 +302,9 @@ Added after the primary result (Phase 4) was known. **It does not revise the pri
 | Stability | Also report agreement between this re-run and the primary run: the same direction and the same verbalised confidence on the same headlines. Temperature 0 is not deterministic. |
 | Order | Dev split first, used only to check the extraction mechanics (captured mass, errors), not to tune anything. Then tag, then the test split once. |
 | Validation | AUROC equals scikit-learn on real 538 data (with and without ties). Extraction is tested on two real captured API replies. A readout compared with itself gives exactly 0 difference. |
+
+**Result (test, run once after the tag, $0.0062):** 76 paired directional calls, accuracy 48.7% for both readouts.
+- Token probability is ≥ 0.990 on every call (median 1 − 2.3×10⁻⁹).
+- It is far worse calibrated than the verbalised number: ΔBrier +0.215 (CI +0.151 to +0.280), ΔECE +0.282 (CI +0.266 to +0.290). Both intervals exclude 0.
+- No detectable difference in discrimination: ΔAUROC −0.075 (CI −0.199 to +0.044). Both AUROC intervals include 0.5.
+- Re-run vs primary run: same direction on 104/105 headlines, same verbalised confidence on 98/105.

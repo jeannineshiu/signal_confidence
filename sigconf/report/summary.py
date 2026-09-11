@@ -92,10 +92,14 @@ def render_logprob_block(m: dict) -> str:
     c = m["comparison"]
     num = "{:.3f}".format
 
+    def fine_pct(x: float) -> str:
+        # 0.9996 must not print as "100.0%": that would claim certainty the model never stated.
+        return f"{x:.2%}" if x >= 0.995 else _pct(x)
+
     def row(label: str, s: dict) -> str:
         e, a = s["ece"], s["auroc"]
         auc = "n/a" if a["value"] is None else f"{num(a['value'])} ({_ci(a['ci95'], num)})"
-        return (f"| {label} | {_pct(s['mean_confidence'])} "
+        return (f"| {label} | {fine_pct(s['mean_confidence'])} "
                 f"| {num(s['brier']['value'])} ({_ci(s['brier']['ci95'], num)}) "
                 f"| {num(e['value'])} (perfect-calibration reference "
                 f"{num(e['perfect_calibration_null']['mean'])}; "
@@ -118,7 +122,7 @@ def render_logprob_block(m: dict) -> str:
         row("Verbalised (the number in the reply)", c["verbalized"]),
         row("Token probability of the chosen direction", c["logprob"]),
         f"| **Difference**, token − verbalised (paired bootstrap) | "
-        f"{c['logprob']['mean_confidence'] - c['verbalized']['mean_confidence']:+.1%} "
+        f"{100 * (c['logprob']['mean_confidence'] - c['verbalized']['mean_confidence']):+.1f} pp "
         f"| {diff('brier')} | {diff('ece')} | {diff('auroc')} |",
         "",
         f"Same {c['n']} directional calls for both readouts (accuracy {_pct(c['accuracy'])} "

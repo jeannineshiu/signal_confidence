@@ -1,0 +1,188 @@
+{
+  "comparison": {
+    "accuracy": 0.4868421052631579,
+    "logprob": {
+      "auroc": {
+        "ci95": [
+          0.40168377084801504,
+          0.6701316701316701
+        ],
+        "value": 0.5356895356895357
+      },
+      "brier": {
+        "ci95": [
+          0.3945525079530483,
+          0.6302147476222953
+        ],
+        "value": 0.5124025979534849
+      },
+      "ece": {
+        "ci95": [
+          0.39464416141548253,
+          0.6308944501718506
+        ],
+        "perfect_calibration_null": {
+          "mean": 0.0007587682380040672,
+          "method": "simulation: hit ~ Bernoulli(confidence), same confidences",
+          "p_value": 9.999000099990002e-05
+        },
+        "value": 0.5127787032344392
+      },
+      "mean_confidence": 0.9996208084975973,
+      "mean_minus_accuracy": 0.5127787032344393,
+      "most_common_values": {
+        "0.990285": 1,
+        "0.993305": 1,
+        "0.994779": 1,
+        "0.99478": 1,
+        "1": 2
+      },
+      "n_distinct_values": 75,
+      "reliability_table": [
+        {
+          "accuracy": 0.4868421052631579,
+          "bin_hi": 1.0,
+          "bin_lo": 0.9,
+          "ci_high": 0.5971130697102026,
+          "ci_low": 0.3778372877915117,
+          "gap": -0.5127787032344393,
+          "mean_confidence": 0.9996208084975973,
+          "n": 76
+        }
+      ],
+      "share_at_or_above_0.99": 1.0
+    },
+    "logprob_minus_verbalized": {
+      "auroc": {
+        "ci95": [
+          -0.19923158846872077,
+          0.0440868121442125
+        ],
+        "value": -0.07484407484407485
+      },
+      "brier": {
+        "ci95": [
+          0.1506623391151696,
+          0.2804086133636611
+        ],
+        "value": 0.2153960190061165
+      },
+      "ece": {
+        "ci95": [
+          0.2659401484348738,
+          0.290226679559822
+        ],
+        "value": 0.28185765060286033
+      },
+      "method": "paired bootstrap: same resampled items for both readouts"
+    },
+    "n": 76,
+    "settings": {
+      "bin_edges": [
+        0.0,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "n_boot": 10000,
+      "seed": 42
+    },
+    "verbalized": {
+      "auroc": {
+        "ci95": [
+          0.4917546093587109,
+          0.7240418118466899
+        ],
+        "value": 0.6105336105336105
+      },
+      "brier": {
+        "ci95": [
+          0.2469407894736842,
+          0.34703947368421045
+        ],
+        "value": 0.29700657894736837
+      },
+      "ece": {
+        "ci95": [
+          0.12171052631578955,
+          0.34342105263157885
+        ],
+        "perfect_calibration_null": {
+          "mean": 0.06250434210526316,
+          "method": "simulation: hit ~ Bernoulli(confidence), same confidences",
+          "p_value": 9.999000099990002e-05
+        },
+        "value": 0.23092105263157886
+      },
+      "mean_confidence": 0.717763157894737,
+      "mean_minus_accuracy": 0.23092105263157908,
+      "most_common_values": {
+        "0.65": 9,
+        "0.7": 37,
+        "0.75": 24,
+        "0.8": 6
+      },
+      "n_distinct_values": 4,
+      "reliability_table": [
+        {
+          "accuracy": 0.2222222222222222,
+          "bin_hi": 0.7,
+          "bin_lo": 0.6,
+          "ci_high": 0.5474110308930111,
+          "ci_low": 0.06322510711784673,
+          "gap": -0.4277777777777778,
+          "mean_confidence": 0.65,
+          "n": 9
+        },
+        {
+          "accuracy": 0.5245901639344263,
+          "bin_hi": 0.8,
+          "bin_lo": 0.7,
+          "ci_high": 0.6446951257715474,
+          "ci_low": 0.401571569249857,
+          "gap": -0.1950819672131151,
+          "mean_confidence": 0.7196721311475414,
+          "n": 61
+        },
+        {
+          "accuracy": 0.5,
+          "bin_hi": 0.9,
+          "bin_lo": 0.8,
+          "ci_high": 0.8123836935173494,
+          "ci_low": 0.18761630648265054,
+          "gap": -0.29999999999999993,
+          "mean_confidence": 0.7999999999999999,
+          "n": 6
+        }
+      ],
+      "share_at_or_above_0.99": 0.0
+    }
+  },
+  "funnel": {
+    "api_error": 0,
+    "flat_label": 6,
+    "neutral": 23,
+    "parse_failure": 0,
+    "scored": 76,
+    "total": 105
+  },
+  "logprob_missing": 0,
+  "opposite_not_in_top_k": 0,
+  "rerun_vs_primary_run": {
+    "direction_same": "104/105",
+    "n": 105,
+    "verbalized_confidence_same": "98/105"
+  },
+  "run": {
+    "llm_calls": 105,
+    "llm_cost_usd": 0.00623535,
+    "logprobs": true,
+    "model": "gpt-4o-mini-2024-07-18",
+    "prompt_sha": "a92bc2e60621cb71",
+    "prompt_version": "v1"
+  },
+  "split": "test"
+}

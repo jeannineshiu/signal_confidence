@@ -114,8 +114,12 @@ def _reliability_panel(ax, table: pd.DataFrame, colour: str) -> None:
                 alpha=0.55, zorder=2)
     ax.plot(x, y, color=colour, linewidth=2, zorder=3)
     ax.scatter(x, y, s=64, color=colour, edgecolor=SURFACE, linewidth=2, zorder=4)
-    for xi, yi, n in zip(x, y, table["n"], strict=True):
-        ax.annotate(f"n={n}", (xi, yi), xytext=(7, -3), textcoords="offset points",
+    ys = list(y)
+    for i, (xi, yi, n) in enumerate(zip(x, ys, table["n"], strict=True)):
+        # Put the label on the side the line to the next point does not use.
+        rising = i + 1 < len(ys) and ys[i + 1] > yi
+        ax.annotate(f"n={n}", (xi, yi), xytext=(7, -6 if rising else 5),
+                    textcoords="offset points", va="top" if rising else "bottom",
                     color=INK_2, fontsize=8.5)
     ax.set_xlim(0, 1.0)
     ax.set_ylim(0, 1.02)

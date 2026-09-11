@@ -44,6 +44,26 @@ def test_committed_metrics_reproduce_offline(split):
     assert_same(json.loads(json.dumps(metrics)), json.loads(committed_path.read_text()))
 
 
+@pytest.mark.parametrize("split", ["dev", "test"])
+def test_committed_logprob_metrics_reproduce_offline(split):
+    from sigconf.experiments import logprob_vs_verbalized as lp
+
+    committed_path = lp.output_paths(split)["metrics"]
+    if not committed_path.exists():
+        pytest.skip(f"no committed logprob {split} metrics yet")
+    metrics, _ = lp.run(split, offline=True, client_factory=refuse, log=lambda _: None)
+    assert_same(json.loads(json.dumps(metrics)), json.loads(committed_path.read_text()))
+
+
+def test_readme_logprob_block_matches_committed_metrics():
+    from sigconf.experiments import logprob_vs_verbalized as lp
+    from sigconf.pipeline import README_PATH
+    from sigconf.report import summary
+
+    block = summary.render_logprob_block(summary.read_metrics(lp.output_paths("test")["metrics"]))
+    assert block in README_PATH.read_text()
+
+
 def test_readme_results_block_matches_committed_metrics():
     """The README's numbers table is exactly what the committed metrics render to."""
     from sigconf.pipeline import README_PATH
