@@ -1,10 +1,15 @@
 PYTHON ?= python
 SPLIT ?= test
 
-.PHONY: install run reproduce test lint check
+.PHONY: install sample run reproduce test lint check
 
 install:
 	$(PYTHON) -m pip install -r requirements.txt
+
+# One-time: rebuild data/sample/ and the price caches from the raw Kaggle file.
+# Not needed to reproduce results — both outputs are committed.
+sample:
+	$(PYTHON) scripts/build_sample.py
 
 # Full pipeline. Calls the LLM only for headlines missing from the signal cache,
 # bounded by LLM_MAX_CALLS / LLM_MAX_COST_USD.

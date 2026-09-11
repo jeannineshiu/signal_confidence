@@ -23,8 +23,9 @@ Changing any of them after seeing test results burns the test set. That's the wh
 
 | Topic | Decision |
 |-------|----------|
-| Universe | 2 tickers, picked in Phase 1 by headline coverage (candidate: AAPL plus one contrasting name). **150 headlines** in total, seeded sample (`SEED=42`) from a fixed date window. |
-| Independence | **At most one headline per ticker per trading day.** Same-day headlines share a label, so keeping several would inflate the effective n. |
+| Universe | **NVDA + JNJ** (high-vol semis vs low-vol defensive). AAPL has only 86 distinct days in this dataset (`notes/phase1_data_audit.md`). **150 headlines**, 75 per ticker, seeded sample (`SEED=42`) from 2011-01-01 to the data end (June 2020). |
+| Eligibility | The headline must name the company (`TICKER_PATTERNS`) and must not be a multi-stock list item (`LIST_HEADLINE_PATTERN`). Both are in `sigconf/config.py`. |
+| Independence | **At most one headline per ticker per anchor day `t0`.** Headlines sharing `t0` share a label, so keeping several would inflate the effective n. The key is `t0`, not the calendar date: a Saturday headline and a Monday pre-market one both anchor on Monday. |
 | Split | **Chronological.** `dev` = earliest 30% (~45) is used *only* to iterate on the prompt. `test` = latest 70% (~105) is run **once** with the frozen prompt. Every README number comes from `test`. |
 | Anchor day `t0` | The first trading day whose 16:00 ET close is **strictly after** `published_at`. A pre-16:00 headline on trading day D gives `t0 = D`. After close, a weekend/holiday, **or a missing time-of-day (00:00:00)** gives the next trading day. The last rule is conservative and matches the dataset author's own backtesting advice. |
 | Label | `r = close[t0+1] / close[t0] − 1` (the trading day after `t0`). `up = 1` if `r ≥ +0.10%`, `down = 0` if `r ≤ −0.10%`, otherwise **flat**. |
@@ -144,7 +145,7 @@ def generate_signal(client, item, guard) -> SignalRecord: ...
 
 Every phase ends the same way: `ruff` clean, `pytest` green, one commit. Don't start the next phase with red tests.
 
-### Phase 0: Scaffold (~0.5 day)
+### Phase 0: Scaffold (~0.5 day): ✅ done 2026-09-11
 - `git init` + `git checkout -b main` (D4). Set up `.gitignore` (`.env`, `data/raw/`, `__pycache__/`, `.venv/`, `.pytest_cache/`) and `.env.example`.
 - Create a conda env `signal-confidence` (Python 3.11), matching how `aws-ai-agent` is set up.
 - Pin `requirements.txt`: `openai pydantic pandas numpy yfinance matplotlib python-dotenv pytest ruff`. **Don't add scipy** (Wilson and the exact binomial are a few lines each, and tested) **or LangChain**.
@@ -152,7 +153,7 @@ Every phase ends the same way: `ruff` clean, `pytest` green, one commit. Don't s
 - `tests/conftest.py`: an autouse fixture deletes `OPENAI_API_KEY`, so an accidental real call fails loudly instead of spending money.
 - **Exit:** `make lint test` passes with one smoke test, and CI goes green on the first push.
 
-### Phase 1: Data and labels (~1 day)
+### Phase 1: Data and labels (~1 day): ✅ done 2026-09-11
 - Download `analyst_ratings_processed.csv` into `data/raw/` (Kaggle CLI or browser).
 - **Check the data before trusting it** (a throwaway script whose findings go into `notes/`):
   - Timestamp format and offsets. The author says "UTC-4". If January rows also show `-04:00`, the offset is a fixed label and winter times are off by an hour. Count the rows within ±1 h of 16:00 ET that could change anchor day, then exclude or document them.
@@ -248,7 +249,7 @@ Total ≈ 5 working days.
 | **Small n.** With 105 test items and 30–50% neutral, there may be only ~55–75 directional points, so CIs are about ±12 pp. | CIs on every number, the ECE null distribution, and framing as a method demo. Don't scale up (spec §3). |
 | **Confidence clustering.** LLMs tend to use 3–5 distinct values (0.7 / 0.8 / 0.85…), so few bins get populated. | Histogram panel, report the count of distinct values, and bins keyed on mean confidence. That alone is a useful finding. |
 | High neutral rate lowers coverage | Pre-set dev-set decision rule (Phase 3). |
-| Timestamp / timezone ambiguity | Phase 1 check; count and document the rows near the 16:00 boundary. |
+| ~~Timestamp / timezone ambiguity~~ | **Resolved in Phase 1:** 100% of offsets match America/New_York DST rules (`notes/phase1_data_audit.md`). |
 | Early-close days (13:00 ET) | Rare. The close is assumed to be 16:00, documented as a known approximation. |
 | LLM nondeterminism | The committed cache is the source of truth, and `--offline` reproduction is checked in Phase 5. |
 | Benzinga headline copyright | Commit only the 150-row slice, with attribution. If that is judged too much, commit IDs plus the build script instead (reproducing then needs a Kaggle account). |
