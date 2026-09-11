@@ -80,15 +80,19 @@ def plot_confidence_comparison(
     """
     with plt.rc_context(RC):
         fig, axes = plt.subplots(
-            2, len(panels), figsize=(5.2 * len(panels), 7.0), sharex=True, sharey="row",
+            2, len(panels), figsize=(5.2 * len(panels), 7.0), sharex=True,
             gridspec_kw={"height_ratios": [3, 1]}, squeeze=False,
         )
         for col, (label, table, confidence, colour) in enumerate(panels):
             ax, hist = axes[0, col], axes[1, col]
+            if col:  # accuracy axes are shared; each count axis keeps its own scale
+                ax.sharey(axes[0, 0])
+                ax.tick_params(labelleft=False)
             _reliability_panel(ax, table, colour)
             ax.text(0, 1.02, label, transform=ax.transAxes, color=INK, fontsize=10,
                     fontweight="bold", va="bottom")
             _distribution_panel(hist, confidence, colour)
+        axes[0, 0].set_xlim(0, 1.03)  # room for marks at exactly 1.0
         axes[0, 0].set_ylabel("Empirical accuracy")
         axes[1, 0].set_ylabel("Calls")
         fig.suptitle(title, x=0.01, ha="left", fontsize=12, fontweight="bold", color=INK)
