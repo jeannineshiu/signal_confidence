@@ -33,7 +33,9 @@ SEED = 42
 # is 2023-10-01; sampling starts a month later as a margin. Using a model whose
 # cutoff is later than SAMPLE_START voids this guarantee, so the signal stage
 # refuses any model not listed here with a cutoff before SAMPLE_START.
-LLM_TRAINING_CUTOFFS = {"gpt-4o-mini": "2023-10-01"}
+# Dated snapshots only: the bare alias "gpt-4o-mini" can be repointed by the
+# provider to a newer model with a later cutoff, silently voiding the guarantee.
+LLM_TRAINING_CUTOFFS = {"gpt-4o-mini-2024-07-18": "2023-10-01"}
 SAMPLE_START = "2023-11-01"
 
 # ── Universe ──────────────────────────────────────────────────────────────────
@@ -71,7 +73,7 @@ BIN_EDGES = (0.0, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
 N_BOOTSTRAP = 10_000
 
 # ── Runtime LLM settings (environment) ────────────────────────────────────────
-DEFAULT_LLM_MODEL = "gpt-4o-mini"
+DEFAULT_LLM_MODEL = "gpt-4o-mini-2024-07-18"
 DEFAULT_MAX_CALLS = 400
 DEFAULT_MAX_COST_USD = 1.00
 
