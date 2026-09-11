@@ -1,66 +1,69 @@
 """Headline ingestion, eligibility filtering, sampling and the dev/test split.
 
-Source: Kaggle "Daily Financial News for 6000+ Stocks" (miguelaenlle),
-file analyst_ratings_processed.csv — columns: index, title, date, stock.
-Timestamps carry explicit US/Eastern offsets (-04:00 / -05:00); every offset
-was checked to match America/New_York DST rules on the full file.
+Source: Kaggle "Apple Stock (AAPL): Historical Financial News Data"
+(frankossai/apple-stock-aapl-historical-financial-news-data, CC0 as listed),
+file apple_news_data.csv — columns used: date (ISO 8601, UTC), title.
+Timestamp accuracy was checked against Apple's five 16:30 ET earnings releases
+in the sample window (notes/phase1_data_audit.md).
 
 Sampling is label-blind: which headlines are drawn depends on the trading
 calendar (to find each headline's anchor day) but never on price moves.
 """
 
+import html
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from sigconf.config import DEV_FRACTION, SAMPLE_PATH
-from sigconf.data.labels import anchor_positions
+from sigconf.data.labels import anchor_positions, is_time_unknown
 
 SAMPLE_COLUMNS = ["id", "ticker", "published_at", "headline", "split"]
 
 
-def load_raw(path: Path) -> tuple[pd.DataFrame, int]:
-    """Read the raw CSV (plain or .zip) → (well-formed rows, number dropped).
+def load_raw(path: Path, ticker: str) -> tuple[pd.DataFrame, int]:
+    """Read the raw CSV (plain or .zip) → (usable rows, number dropped).
 
-    About 0.2% of raw rows are broken across two lines (a title with an
-    embedded newline shifts the date into the title column). Those rows are
-    dropped and counted rather than repaired.
+    Titles are HTML-unescaped ("&amp;" → "&") and whitespace-collapsed so each
+    prompt is one clean line. Rows with a missing title or unparseable date
+    are dropped and counted.
     """
-    raw = pd.read_csv(path, usecols=["title", "date", "stock"])
+    raw = pd.read_csv(path, usecols=["date", "title"])
     ts = pd.to_datetime(raw["date"], utc=True, errors="coerce", format="ISO8601")
-    ok = ts.notna() & raw["stock"].notna() & raw["title"].notna()
-    df = pd.DataFrame(
-        {
-            "ticker": raw.loc[ok, "stock"].astype(str),
-            "published_at": ts[ok],
-            # Collapse embedded newlines / runs of spaces so each prompt is one line.
-            "headline": raw.loc[ok, "title"].astype(str).str.split().str.join(" "),
-        }
-    )
+    ok = ts.notna() & raw["title"].notna()
+    titles = raw.loc[ok, "title"].astype(str).map(html.unescape).str.split().str.join(" ")
+    df = pd.DataFrame({"ticker": ticker, "published_at": ts[ok], "headline": titles})
     return df.reset_index(drop=True), int((~ok).sum())
 
 
 def eligible(
-    df: pd.DataFrame, ticker_patterns: dict[str, str], list_pattern: str, start: str
-) -> pd.DataFrame:
-    """Headlines for the chosen tickers that name the company and are not list items."""
-    parts = []
-    for ticker, pattern in ticker_patterns.items():
-        rows = df[(df["ticker"] == ticker) & (df["published_at"] >= pd.Timestamp(start, tz="UTC"))]
-        names_company = rows["headline"].str.contains(pattern, case=False, regex=True)
-        is_list = rows["headline"].str.contains(list_pattern, case=False, regex=True)
-        parts.append(rows[names_company & ~is_list])
-    return pd.concat(parts, ignore_index=True)
+    df: pd.DataFrame, company_pattern: str, live_blog_pattern: str, start: str
+) -> tuple[pd.DataFrame, dict[str, int]]:
+    """Apply the pre-registered eligibility rules; return rows and a count funnel.
+
+    In order: published on/after `start` → names the company → exact
+    publication time known → not a live blog → first copy of a syndicated title.
+    """
+    funnel = {"raw": len(df)}
+    df = df[df["published_at"] >= pd.Timestamp(start, tz="UTC")]
+    funnel["after_start"] = len(df)
+    df = df[df["headline"].str.contains(company_pattern, case=False, regex=True)]
+    funnel["names_company"] = len(df)
+    df = df[~is_time_unknown(df["published_at"])]
+    funnel["exact_time"] = len(df)
+    df = df[~df["headline"].str.contains(live_blog_pattern, case=False, regex=True)]
+    funnel["not_live_blog"] = len(df)
+    df = df.sort_values(["published_at", "headline"], kind="stable")
+    df = df[~df["headline"].str.lower().duplicated(keep="first")]
+    funnel["deduplicated"] = len(df)
+    return df.reset_index(drop=True), funnel
 
 
 def sample(
-    candidates: pd.DataFrame,
-    trading_days: dict[str, pd.DatetimeIndex],
-    n_per_ticker: int,
-    seed: int,
+    candidates: pd.DataFrame, trading_days: pd.DatetimeIndex, n: int, seed: int
 ) -> pd.DataFrame:
-    """Draw n_per_ticker headlines per ticker, at most one per anchor day.
+    """Draw n headlines, at most one per anchor day, then split chronologically.
 
     Two headlines sharing an anchor day share the same label, so keeping both
     would count one market outcome twice. The key is the anchor day t0, not the
@@ -69,26 +72,18 @@ def sample(
     calendar) are eligible.
     """
     rng = np.random.default_rng(seed)
-    parts = []
-    for ticker in sorted(trading_days):
-        rows = candidates[candidates["ticker"] == ticker].sort_values(
-            ["published_at", "headline"], kind="stable"
-        )
-        days = trading_days[ticker]
-        pos = anchor_positions(rows["published_at"], days)
-        rows = rows.assign(_t0=pos)[pos + 1 < len(days)]
+    rows = candidates.sort_values(["published_at", "headline"], kind="stable")
+    pos = anchor_positions(rows["published_at"], trading_days)
+    rows = rows.assign(_t0=pos)[pos + 1 < len(trading_days)]
 
-        # One headline per anchor day, chosen at random; then n days at random.
-        shuffled = rows.iloc[rng.permutation(len(rows))]
-        one_per_day = shuffled.drop_duplicates("_t0", keep="first")
-        if len(one_per_day) < n_per_ticker:
-            raise ValueError(
-                f"{ticker}: only {len(one_per_day)} eligible anchor days, need {n_per_ticker}"
-            )
-        chosen = rng.choice(len(one_per_day), size=n_per_ticker, replace=False)
-        parts.append(one_per_day.iloc[np.sort(chosen)].drop(columns="_t0"))
+    # One headline per anchor day, chosen at random; then n days at random.
+    shuffled = rows.iloc[rng.permutation(len(rows))]
+    one_per_day = shuffled.drop_duplicates("_t0", keep="first")
+    if len(one_per_day) < n:
+        raise ValueError(f"only {len(one_per_day)} eligible anchor days, need {n}")
+    chosen = one_per_day.iloc[rng.choice(len(one_per_day), size=n, replace=False)]
 
-    out = pd.concat(parts).sort_values(["published_at", "ticker"], kind="stable")
+    out = chosen.drop(columns="_t0").sort_values(["published_at", "headline"], kind="stable")
     out = out.reset_index(drop=True)
     out.insert(0, "id", [f"h{i:03d}" for i in range(len(out))])
     out["split"] = chronological_split(out["published_at"])

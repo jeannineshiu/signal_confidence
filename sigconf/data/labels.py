@@ -10,8 +10,11 @@ Consequences:
   * published 11:00 ET on trading day D   → t0 = D      (close D is after the news)
   * published 16:00:00 or later on D      → t0 = next trading day
   * weekend / holiday                     → t0 = next trading day
-  * time-of-day unknown (00:00:00 local)  → treated as "sometime on that date",
-    i.e. possibly after the close, so t0 = next trading day after that date
+  * time-of-day unknown                   → treated as "sometime on that date",
+    i.e. possibly after the close, so t0 = next trading day after that date.
+    Sources mark a date-only item as midnight, in UTC or in ET; both count.
+    Midnight UTC is 19:00/20:00 ET on the *previous* evening, so taking it at
+    face value would anchor a day too early — exactly the look-ahead to avoid.
 
 The entry price close[t0] is therefore always a price that existed *after* the
 headline was public. A window starting at a close that predates the news would
@@ -43,17 +46,30 @@ def close_times(trading_days: pd.DatetimeIndex) -> pd.DatetimeIndex:
     return local.tz_localize(MARKET_TZ).tz_convert("UTC")
 
 
+def is_time_unknown(published_at: pd.Series) -> pd.Series:
+    """True where the timestamp is exactly midnight in UTC or in ET (date-only)."""
+    ts = pd.to_datetime(published_at, utc=True)
+    local = ts.dt.tz_convert(MARKET_TZ)
+    return (ts.dt.time == time(0, 0)) | (local.dt.time == time(0, 0))
+
+
 def effective_publication(published_at: pd.Series) -> pd.Series:
     """Publication instant used for anchoring, in UTC.
 
-    A local wall-clock time of exactly 00:00:00 means the time of day is
-    unknown, so the headline is pushed to the end of its local date.
+    Date-only items are pushed to the last instant of their calendar date in
+    ET. The date is read in UTC, which for both midnight conventions is the
+    later candidate: midnight ET on D is 04:00/05:00 UTC on D, and midnight UTC
+    on D is the evening of D-1 in ET but a date-D item in the source.
     """
     ts = pd.to_datetime(published_at, utc=True)
-    local = ts.dt.tz_convert(MARKET_TZ)
-    unknown_time = local.dt.time == time(0, 0)
-    end_of_day = local.dt.normalize() + pd.Timedelta(days=1) - pd.Timedelta(microseconds=1)
-    return local.where(~unknown_time, end_of_day).dt.tz_convert("UTC")
+    unknown = is_time_unknown(ts)
+    utc_date = ts.dt.tz_localize(None).dt.normalize()
+    end_of_day = (
+        (utc_date + pd.Timedelta(days=1) - pd.Timedelta(microseconds=1))
+        .dt.tz_localize(MARKET_TZ)
+        .dt.tz_convert("UTC")
+    )
+    return ts.where(~unknown, end_of_day)
 
 
 def anchor_positions(published_at: pd.Series, trading_days: pd.DatetimeIndex) -> np.ndarray:

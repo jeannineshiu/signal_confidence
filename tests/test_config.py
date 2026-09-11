@@ -1,6 +1,7 @@
 import math
 import os
 
+import pandas as pd
 import pytest
 
 from sigconf import config
@@ -17,6 +18,12 @@ def test_spec_buckets_start_at_half_with_a_separate_incoherent_bucket():
     # Spec §6 buckets are 0.5-0.6 … 0.9-1.0; below 0.5 is its own bucket.
     assert config.BIN_EDGES[1] == 0.5
     assert config.BIN_EDGES[2:] == (0.6, 0.7, 0.8, 0.9, 1.0)
+
+
+def test_sampling_starts_after_every_allowed_models_training_cutoff():
+    start = pd.Timestamp(config.SAMPLE_START)
+    assert config.DEFAULT_LLM_MODEL in config.LLM_TRAINING_CUTOFFS
+    assert all(pd.Timestamp(c) < start for c in config.LLM_TRAINING_CUTOFFS.values())
 
 
 def test_split_and_dead_band_are_sane():

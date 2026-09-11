@@ -5,24 +5,25 @@ from sigconf.data import headlines
 from sigconf.data.labels import anchor_positions
 
 RAW_CSV = """\
-,title,date,stock
-0,Nvidia Beats Q2 Estimates,2019-07-02 11:00:00-04:00,NVDA
-1,Sterne Agee Provides Color on Aaron's,,
-,2011-07-20 06:43:00-04:00,AAN,
-2,Stocks That Hit 52-Week Highs On Friday,2019-07-05 10:30:00-04:00,NVDA
-3,NVDA Upgraded to Buy,2019-01-15 09:00:00-05:00,NVDA
-4,Johnson & Johnson Settles Talc Suit,2019-07-03 08:00:00-04:00,JNJ
-5,Pfizer Raises Guidance,2019-07-03 08:00:00-04:00,PFE
-6,Nvidia Unveils New GPU,2010-06-01 08:00:00-04:00,NVDA
-7,A Look at AMD's New Gaming APUs,2019-07-08 08:00:00-04:00,NVDA
-8,"NVIDIA Shares Up  2%;
-BMO Upbeat",2019-07-09 08:00:00-04:00,NVDA
+date,title,content,link,symbols
+2024-05-02T21:40:07+00:00,Apple (AAPL) Beats Q2 Earnings,body,https://x,AAPL.US
+2024-05-02T21:45:00+00:00,apple (aapl) beats q2 earnings,syndicated copy,https://y,AAPL.US
+2024-05-03T00:00:00+00:00,Apple Date-Only Story,body,https://x,AAPL.US
+2024-05-03T04:00:00+00:00,Apple Midnight ET Story,body,https://x,AAPL.US
+2024-05-03T13:00:00+00:00,Stock Market Today: Apple leads Nasdaq higher (Live Coverage),b,u,s
+2024-05-03T14:00:00+00:00,"Dow Rises;  Apple
+Slides On Downgrade",body,https://x,AAPL.US
+2024-05-03T15:00:00+00:00,S&amp;P 500 Rallies; Apple Up,body,https://x,AAPL.US
+2024-05-03T16:00:00+00:00,Pineapple Prices Soar,body,https://x,AAPL.US
+2023-10-15T12:00:00+00:00,Apple Before The Cutoff,body,https://x,AAPL.US
+not-a-date,Apple Broken Row,body,https://x,AAPL.US
+2024-05-06T12:00:00+00:00,,body,https://x,AAPL.US
 """
 
-PATTERNS = {"NVDA": r"nvidia|\bnvda\b", "JNJ": r"johnson\s*&\s*johnson"}
-LIST = r"stocks (?:that|moving)"
-DAYS = pd.bdate_range("2019-01-01", "2019-12-31").drop(
-    pd.DatetimeIndex(["2019-01-01", "2019-07-04"])
+COMPANY = r"\bapple\b|\baapl\b"
+LIVE = r"live coverage|stock market today"
+DAYS = pd.bdate_range("2024-01-01", "2024-12-31").drop(
+    pd.DatetimeIndex(["2024-01-01", "2024-07-04"])
 )
 
 
@@ -30,103 +31,89 @@ DAYS = pd.bdate_range("2019-01-01", "2019-12-31").drop(
 def raw(tmp_path):
     path = tmp_path / "raw.csv"
     path.write_text(RAW_CSV)
-    return headlines.load_raw(path)
+    return headlines.load_raw(path, "AAPL")
 
 
-def test_load_raw_drops_and_counts_broken_rows(raw):
+def test_load_raw_drops_and_counts_unusable_rows(raw):
     df, dropped = raw
-    assert dropped == 2  # the title and its orphaned continuation line
-    assert len(df) == 8
-
-
-def test_load_raw_collapses_whitespace_inside_quoted_titles(raw):
-    df, _ = raw
-    assert "NVIDIA Shares Up 2%; BMO Upbeat" in set(df["headline"])
+    assert dropped == 2  # unparseable date, missing title
+    assert len(df) == 9
+    assert (df["ticker"] == "AAPL").all()
     assert df["published_at"].dt.tz is not None
 
 
-def test_load_raw_respects_both_eastern_offsets(raw):
+def test_load_raw_cleans_titles(raw):
     df, _ = raw
-    by_title = df.set_index("headline")["published_at"]
-    assert by_title["NVDA Upgraded to Buy"] == pd.Timestamp("2019-01-15T14:00Z")  # EST
-    assert by_title["Nvidia Beats Q2 Estimates"] == pd.Timestamp("2019-07-02T15:00Z")  # EDT
+    titles = set(df["headline"])
+    assert "Dow Rises; Apple Slides On Downgrade" in titles  # newline + double space
+    assert "S&P 500 Rallies; Apple Up" in titles  # HTML entity
 
 
-def test_eligible_keeps_only_company_specific_non_list_headlines_in_window(raw):
+def test_eligibility_rules_and_funnel(raw):
     df, _ = raw
-    got = headlines.eligible(df, PATTERNS, LIST, start="2011-01-01")
-    assert sorted(got["headline"]) == [
-        "Johnson & Johnson Settles Talc Suit",
-        "NVDA Upgraded to Buy",
-        "NVIDIA Shares Up 2%; BMO Upbeat",
-        "Nvidia Beats Q2 Estimates",
+    got, funnel = headlines.eligible(df, COMPANY, LIVE, start="2023-11-01")
+
+    assert got["headline"].tolist() == [
+        "Apple (AAPL) Beats Q2 Earnings",       # syndicated lowercase copy dropped
+        "Dow Rises; Apple Slides On Downgrade",
+        "S&P 500 Rallies; Apple Up",
     ]
+    assert funnel == {
+        "raw": 9,
+        "after_start": 8,     # pre-cutoff row out
+        "names_company": 7,   # "Pineapple" is not Apple
+        "exact_time": 5,      # midnight UTC and midnight ET out
+        "not_live_blog": 4,
+        "deduplicated": 3,
+    }
 
 
-def _candidates(rows):
+def _candidates(stamps, titles=None):
+    titles = titles or [f"Apple {i}" for i in range(len(stamps))]
     return pd.DataFrame(
-        {
-            "ticker": [r[0] for r in rows],
-            "published_at": pd.to_datetime([r[1] for r in rows], utc=True),
-            "headline": [r[2] for r in rows],
-        }
+        {"ticker": "AAPL", "published_at": pd.to_datetime(stamps, utc=True), "headline": titles}
     )
 
 
 def test_sample_keeps_at_most_one_headline_per_anchor_day():
-    # Saturday, Sunday and Monday pre-market all anchor on Monday 2019-07-08.
-    cands = _candidates(
-        [
-            ("NVDA", "2019-07-06T10:00-04:00", "sat"),
-            ("NVDA", "2019-07-07T10:00-04:00", "sun"),
-            ("NVDA", "2019-07-08T08:00-04:00", "mon"),
-            ("NVDA", "2019-07-09T08:00-04:00", "tue"),
-        ]
-    )
-    out = headlines.sample(cands, {"NVDA": DAYS}, n_per_ticker=2, seed=0)
-    t0 = anchor_positions(out["published_at"], DAYS)
+    # Saturday, Sunday and Monday pre-market all anchor on Monday 2024-07-08.
+    cands = _candidates(["2024-07-06T10:00-04:00", "2024-07-07T10:00-04:00",
+                         "2024-07-08T08:00-04:00", "2024-07-09T08:00-04:00"])
+    out = headlines.sample(cands, DAYS, n=2, seed=0)
     assert len(out) == 2
-    assert len(set(t0)) == 2
+    assert len(set(anchor_positions(out["published_at"], DAYS))) == 2
     with pytest.raises(ValueError, match="only 2 eligible anchor days"):
-        headlines.sample(cands, {"NVDA": DAYS}, n_per_ticker=3, seed=0)
+        headlines.sample(cands, DAYS, n=3, seed=0)
 
 
 def test_sample_excludes_headlines_without_a_full_label_window():
-    days = pd.DatetimeIndex(["2019-07-01", "2019-07-02", "2019-07-03"])
-    cands = _candidates(
-        [
-            ("NVDA", "2019-07-01T10:00-04:00", "ok"),
-            ("NVDA", "2019-07-03T10:00-04:00", "t0 is last day, no t1"),
-            ("NVDA", "2019-07-03T17:00-04:00", "no t0 at all"),
-        ]
-    )
-    out = headlines.sample(cands, {"NVDA": days}, n_per_ticker=1, seed=0)
+    days = pd.DatetimeIndex(["2024-07-01", "2024-07-02", "2024-07-03"])
+    cands = _candidates(["2024-07-01T10:00-04:00", "2024-07-03T10:00-04:00",
+                         "2024-07-03T17:00-04:00"], ["ok", "t0 is last day", "no t0"])
+    out = headlines.sample(cands, days, n=1, seed=0)
     assert out["headline"].tolist() == ["ok"]
 
 
-def _many(ticker, n, start="2019-02-01"):
-    stamps = pd.bdate_range(start, periods=n) + pd.Timedelta(hours=14)
-    return _candidates([(ticker, s.tz_localize("America/New_York"), f"{ticker}{i}")
-                        for i, s in enumerate(stamps)])
+def _many(n, start="2024-02-01"):
+    stamps = (pd.bdate_range(start, periods=n) + pd.Timedelta(hours=14)).tz_localize(
+        "America/New_York")
+    return _candidates(stamps)
 
 
-def test_sample_is_deterministic_per_seed_and_balanced_per_ticker():
-    cands = pd.concat([_many("NVDA", 60), _many("JNJ", 60)], ignore_index=True)
-    cal = {"NVDA": DAYS, "JNJ": DAYS}
-    a = headlines.sample(cands, cal, n_per_ticker=20, seed=42)
-    b = headlines.sample(cands, cal, n_per_ticker=20, seed=42)
-    c = headlines.sample(cands, cal, n_per_ticker=20, seed=7)
+def test_sample_is_deterministic_per_seed():
+    cands = _many(80)
+    a = headlines.sample(cands, DAYS, n=40, seed=42)
+    b = headlines.sample(cands, DAYS, n=40, seed=42)
+    c = headlines.sample(cands, DAYS, n=40, seed=7)
 
     pd.testing.assert_frame_equal(a, b)
     assert set(a["headline"]) != set(c["headline"])
-    assert a["ticker"].value_counts().to_dict() == {"NVDA": 20, "JNJ": 20}
     assert list(a.columns) == headlines.SAMPLE_COLUMNS
     assert a["id"].is_unique
 
 
 def test_split_is_chronological_with_dev_first():
-    cands = pd.concat([_many("NVDA", 60), _many("JNJ", 60)], ignore_index=True)
-    out = headlines.sample(cands, {"NVDA": DAYS, "JNJ": DAYS}, n_per_ticker=20, seed=42)
+    out = headlines.sample(_many(80), DAYS, n=40, seed=42)
     dev = out[out["split"] == "dev"]
     test = out[out["split"] == "test"]
 
@@ -135,14 +122,13 @@ def test_split_is_chronological_with_dev_first():
 
 
 def test_chronological_split_requires_sorted_input():
-    unsorted = pd.Series(pd.to_datetime(["2019-07-02", "2019-07-01"], utc=True))
+    unsorted = pd.Series(pd.to_datetime(["2024-07-02", "2024-07-01"], utc=True))
     with pytest.raises(ValueError):
         headlines.chronological_split(unsorted)
 
 
 def test_sample_file_round_trip_preserves_instants(tmp_path):
-    cands = _many("NVDA", 10)
-    out = headlines.sample(cands, {"NVDA": DAYS}, n_per_ticker=5, seed=0)
+    out = headlines.sample(_many(10), DAYS, n=5, seed=0)
     path = tmp_path / "s.csv"
     headlines.write_sample(out, path)
     back = headlines.load_sample(path)

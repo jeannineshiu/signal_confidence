@@ -19,11 +19,11 @@ from sigconf.data import headlines, labels, prices
 def load_labeled(offline: bool = False) -> pd.DataFrame:
     """Stage 1: the committed headline sample with next-day labels attached."""
     sample = headlines.load_sample()
-    parts = []
-    for ticker in config.TICKER_PATTERNS:
-        closes = prices.load_closes(ticker, config.PRICE_START, config.PRICE_END, offline=offline)
-        parts.append(labels.label_headlines(sample[sample["ticker"] == ticker], closes))
-    return pd.concat(parts).sort_values(["published_at", "id"]).reset_index(drop=True)
+    closes = prices.load_closes(
+        config.TICKER, config.PRICE_START, config.PRICE_END, offline=offline
+    )
+    labeled = labels.label_headlines(sample, closes)
+    return labeled.sort_values(["published_at", "id"]).reset_index(drop=True)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -47,7 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     labeled = load_labeled(offline=args.offline)
     split = labeled[labeled["split"] == args.split]
     print(f"[1/4] labels ({args.split}): {len(split)} headlines")
-    print(pd.crosstab(split["ticker"], split["label"], margins=True).to_string())
+    print(split["label"].value_counts().to_string())
 
     print("sigconf.pipeline: stages 2-4 not implemented yet (see PLAN.md §3)", file=sys.stderr)
     return 1

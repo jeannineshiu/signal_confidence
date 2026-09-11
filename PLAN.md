@@ -9,8 +9,8 @@ If the two conflict, the spec wins. Update this plan instead of letting it drift
 
 | # | Decision | Recommendation | Alternative / note |
 |---|----------|----------------|--------------------|
-| D1 | LLM provider + model | **OpenAI `gpt-4o-mini`** through the plain `openai` SDK (no LangChain), `temperature=0`, `seed=42` | This follows `aws-ai-agent` (Pydantic schema, same API key) and keeps dependencies minimal. About 150 calls, so roughly $0.02 per full run. Only `signals/client.py` changes if you switch provider. |
-| D2 | Headline dataset | **Kaggle "Daily Financial News for 6000+ Stocks"** (`miguelaenlle/massive-stock-news-analysis-db-for-nlpbacktests`), file `analyst_ratings_processed.csv`: columns title / date / stock, **minute-level timestamps** (author says UTC-4), 2009–2020, listed as **CC0** on Kaggle. The author notes the headlines themselves are Benzinga's property. | FNSPID (Hugging Face `Zihan1004/FNSPID`, 1999–2023, **CC BY-NC 4.0**). Its news table is one 5.7 GB CSV, which is too heavy for a 150-row slice. |
+| D1 | LLM provider + model | **OpenAI `gpt-4o-mini`** through the plain `openai` SDK (no LangChain), `temperature=0`, `seed=42`. **Locked by D2:** its training cutoff (2023-10-01) predates every headline, and the signal stage refuses any model not in `LLM_TRAINING_CUTOFFS` with a cutoff before `SAMPLE_START`. | This follows `aws-ai-agent` (Pydantic schema, same API key) and keeps dependencies minimal. About 150 calls, so roughly $0.02 per full run. |
+| D2 | Headline dataset | **Revised 2026-09-11: only real data, and it must postdate the training cutoff.** Kaggle `frankossai/apple-stock-aapl-historical-financial-news-data` (mostly Yahoo Finance, UTC timestamps, listed as CC0), **AAPL headlines from 2023-11-01 to 2024-11-22**, all after gpt-4o-mini's cutoff, so the model can't "remember" what happened next. | The first build used Benzinga 2009–2020 (NVDA + JNJ), which was real but entirely inside the training window, so it was replaced. The full search is in `notes/dataset_survey.md`. |
 | D3 | Label anchor rule | **Timestamp-aware:** the entry close must come strictly *after* publication (see §1) | Taken literally, spec §4 ("close D → close D+1") lets after-close headlines use a close that happened before the news was out. That stays inside spec §2's no-look-ahead principle but flatters the signal. The stricter rule is in the spirit of §2. |
 | D4 | Git | `git init` **inside** `signal_confidence/` | `$HOME` is itself a git repo (branch `jeannine`), so without this, commits would land in the home repo. System git is 2.23, so use `git init` then `git checkout -b main` (`init -b` is not available). |
 
@@ -23,11 +23,11 @@ Changing any of them after seeing test results burns the test set. That's the wh
 
 | Topic | Decision |
 |-------|----------|
-| Universe | **NVDA + JNJ** (high-vol semis vs low-vol defensive). AAPL has only 86 distinct days in this dataset (`notes/phase1_data_audit.md`). **150 headlines**, 75 per ticker, seeded sample (`SEED=42`) from 2011-01-01 to the data end (June 2020). |
-| Eligibility | The headline must name the company (`TICKER_PATTERNS`) and must not be a multi-stock list item (`LIST_HEADLINE_PATTERN`). Both are in `sigconf/config.py`. |
-| Independence | **At most one headline per ticker per anchor day `t0`.** Headlines sharing `t0` share a label, so keeping several would inflate the effective n. The key is `t0`, not the calendar date: a Saturday headline and a Monday pre-market one both anchor on Monday. |
+| Universe | **AAPL only** (spec allows 1–2 tickers). **150 headlines**, seeded sample (`SEED=42`) from 2023-11-01 to the data end (2024-11). |
+| Eligibility | In order: published on or after `SAMPLE_START` → names the company (`COMPANY_PATTERN`) → **exact publication time known** (date-only rows stored as midnight UTC/ET are excluded) → **not a live blog** (`LIVE_BLOG_PATTERN`: the title is rewritten after its timestamp, which leaks look-ahead) → first copy of a syndicated title. All rules live in `sigconf/config.py`. No list-headline filter: a regex also removed Apple-specific headlines, so low-information headlines are left for the LLM to call neutral. |
+| Independence | **At most one headline per anchor day `t0`.** Headlines sharing `t0` share a label, so keeping several would inflate the effective n. The key is `t0`, not the calendar date: a Saturday headline and a Monday pre-market one both anchor on Monday. |
 | Split | **Chronological.** `dev` = earliest 30% (~45) is used *only* to iterate on the prompt. `test` = latest 70% (~105) is run **once** with the frozen prompt. Every README number comes from `test`. |
-| Anchor day `t0` | The first trading day whose 16:00 ET close is **strictly after** `published_at`. A pre-16:00 headline on trading day D gives `t0 = D`. After close, a weekend/holiday, **or a missing time-of-day (00:00:00)** gives the next trading day. The last rule is conservative and matches the dataset author's own backtesting advice. |
+| Anchor day `t0` | The first trading day whose 16:00 ET close is **strictly after** `published_at`. A pre-16:00 headline on trading day D gives `t0 = D`. After close, a weekend/holiday, **or a missing time-of-day** gives the next trading day. Missing time means exactly midnight in UTC *or* ET. Midnight UTC is the previous evening in ET, so taking it at face value would anchor a day early. |
 | Label | `r = close[t0+1] / close[t0] − 1` (the trading day after `t0`). `up = 1` if `r ≥ +0.10%`, `down = 0` if `r ≤ −0.10%`, otherwise **flat**. |
 | Dead-band | `|r| < 0.0010` is flat. Flat items are excluded from directional metrics but counted in coverage. The threshold is fixed a priori, never tuned. |
 | Prices | `yfinance` daily bars, `auto_adjust=True` passed explicitly (split- and dividend-adjusted), cached to CSV and committed. |
@@ -36,7 +36,7 @@ Changing any of them after seeing test results burns the test set. That's the wh
 | Bins | `[0.0,0.5) [0.5,0.6) [0.6,0.7) [0.7,0.8) [0.8,0.9) [0.9,1.0]`: left-closed, with the last bin closed on both ends. Edges are explicit literals, not `linspace`. Empty bins are left out of ECE and the plot. |
 | Brier | `mean((c − hit)²)` over directional predictions. This equals `mean((P(up) − y)²)` with `P(up) = c` if bullish, `1 − c` if bearish, and a test checks the identity. Baseline: constant 0.5 gives **0.25**. Also report the Brier skill score `1 − B/0.25`. |
 | ECE | `Σ_b (n_b/N)·|acc_b − conf_b|`, where `conf_b` is the bin's **mean** confidence (not the bin centre). |
-| Inference | Wilson 95% CI on every accuracy. Exact two-sided binomial p-value against 0.5. Bootstrap 95% CI for Brier and ECE (10 000 resamples, seeded). **ECE null distribution:** simulate outcomes `~ Bernoulli(c)` for the *same* confidences, so a perfectly calibrated model at this n gives the reference ECE. With ~60 points, even a perfect model shows ECE > 0, and this is how to say whether the observed ECE is more than noise. |
+| Inference | Wilson 95% CI on every accuracy. Exact two-sided binomial p-value against 0.5. Bootstrap 95% CI for Brier and ECE (10 000 resamples of the *real* scored rows, seeded). **ECE null distribution:** simulate outcomes `~ Bernoulli(c)` for the *same* confidences, so a perfectly calibrated model at this n gives the reference ECE. With ~60 points, even a perfect model shows ECE > 0, and this is how to say whether the observed ECE is more than noise. **This is a simulation-based significance test, not data. The README says so explicitly (confirmed 2026-09-11).** |
 | No P&L | Strategy returns are deliberately not computed, so nothing suggests the signal is tradable. |
 
 ### Coverage funnel
@@ -77,7 +77,7 @@ signal_confidence/
 │   ├── config.py                # paths, SEED, DEAD_BAND, BINS, env-driven caps
 │   ├── pipeline.py              # ENTRY POINT: python -m sigconf.pipeline [--split] [--offline]
 │   ├── data/
-│   │   ├── headlines.py         # load sample, dedupe per ticker-day, split
+│   │   ├── headlines.py         # raw load, eligibility funnel, one-per-anchor-day sample, split
 │   │   ├── prices.py            # yfinance fetch + CSV cache (cache-first)
 │   │   └── labels.py            # anchor_day(), next_day_label() — pure functions
 │   ├── signals/
@@ -130,7 +130,8 @@ def generate_signal(client, item, guard) -> SignalRecord: ...
 
 - **Structured output:** request OpenAI's JSON-schema response format, but **validate with Pydantic in our own code** (`Signal.model_validate_json`). That keeps the retry path ours and testable with a fake client.
 - **Retry:** if attempt 1 fails with `ValidationError` or a JSON decode error, attempt 2 re-sends the same prompt plus a one-line correction naming the error. If that also fails, the item becomes `parse_failure` and its raw text is stored. Transient HTTP errors go to the SDK's own `max_retries`. Anything that still fails becomes `api_error`, which is separate from `parse_failure` and also counted.
-- **Prompt content:** ticker and headline only. **No date and no price information.** Dates make it easier for the model to recall what happened next (see Risks), and a test enforces this.
+- **Prompt content:** ticker and headline only. **No date and no price information.** The headlines postdate the model's cutoff, but leaving dates out is kept as defence in depth, and a test enforces it.
+- **Model guard:** `generate.py` refuses to run if `LLM_MODEL` is not in `LLM_TRAINING_CUTOFFS` with a cutoff before `SAMPLE_START`.
 - **Cost guard** (env: `LLM_MAX_CALLS`, default 400; `LLM_MAX_COST_USD`, default 1.00):
   - *Pre-flight*, before the batch: `pending × 2 attempts × worst-case cost per call` must fit under the cap, or the run aborts before any call. Worst case uses a conservative input-token estimate (`len(chars)/3` + overhead) and `max_tokens=150` for output. Cached items cost 0.
   - *In-flight*: tally the real `usage` tokens. Before each call, check that the remaining budget covers one worst-case call, and stop if it doesn't.
@@ -152,30 +153,27 @@ Every phase ends the same way: `ruff` clean, `pytest` green, one commit. Don't s
 - `tests/conftest.py`: an autouse fixture deletes `OPENAI_API_KEY`, so an accidental real call fails loudly instead of spending money.
 - **Exit:** `make lint test` passes with one smoke test, and CI goes green on the first push.
 
-### Phase 1: Data and labels (~1 day): ✅ done 2026-09-11
-- Download `analyst_ratings_processed.csv` into `data/raw/` (Kaggle CLI or browser).
-- **Check the data before trusting it** (a throwaway script whose findings go into `notes/`):
-  - Timestamp format and offsets. The author says "UTC-4". If January rows also show `-04:00`, the offset is a fixed label and winter times are off by an hour. Count the rows within ±1 h of 16:00 ET that could change anchor day, then exclude or document them.
-  - The share of rows at exactly `00:00:00` (time unknown, so the next trading day is used).
-  - Headlines per ticker per year, and the mix of headline types (analyst actions vs news vs "stocks moving" lists).
-- Choose the 2 tickers and the date window. Write `scripts/build_sample.py`: filter → one headline per ticker-day → seeded sample of 150 → chronological split column → `data/sample/headlines.csv`. Commit the slice.
-- Implement `prices.py` (cache-first) and `labels.py` (pure functions), test-first (§4).
-- **Manual audit:** print 10 random labeled rows (`published_at`, `t0`, `t0+1`, both closes, `r`, label) and check 3 of them against a price chart by hand. Record them in `notes/`.
-- **Exit:** labeled sample with up/down/flat counts and base rate printed, and the no-look-ahead invariant test passes on the real sample.
+### Phase 1: Data and labels (~1 day): ✅ done 2026-09-11 (rebuilt on AAPL post-cutoff data)
+- Raw file `apple_news_data.csv(.zip)` in `data/raw/` (gitignored). `make sample` rebuilds the committed slice and the price cache.
+- Timestamps checked against Apple's five 16:30 ET earnings releases. Handled date-only midnight-UTC rows and live-blog title rewriting. Findings are in `notes/phase1_data_audit.md`.
+- Sample: 150 headlines, dev 45 (2023-11 → 2024-03) and test 105 (2024-03 → 2024-11). 10-row manual audit, plus a 150/150 cross-check against unadjusted closes.
+- **Base rates differ sharply between splits:** 33% of dev directional labels are up, versus **61% of test (n = 97)**. Always-up is therefore a strong baseline on test.
 
 ### Phase 2: Evaluation harness (~1.5 days), built before any LLM call
-The harness is the deliverable. Building it against synthetic data first means the metrics can't be shaped around the real results.
+The harness is the deliverable. It is built and validated **before any LLM call**, so the metrics can't be shaped around the results. **No synthetic data (confirmed 2026-09-11):** the harness is validated on real forecasts.
 - `calibration.py`, `brier.py`, `baselines.py`, `uncertainty.py`, `scoring.py`, per §1 and §2.
-- Synthetic sanity checks, written as tests:
-  - (a) A **perfectly calibrated** forecaster (`hit ~ Bernoulli(c)`): observed ECE falls inside its own null distribution, and the curve hugs the diagonal.
-  - (b) An **over-confident** forecaster (reports 0.9, true rate 0.6): ECE ≈ 0.30, and the curve sits below the diagonal.
-  - (c) A constant 0.5 forecaster gives Brier = 0.25 exactly.
+- Real-data validation using **FiveThirtyEight `checking-our-work-data`** (CC BY 4.0: real published pre-game win probabilities and results). Commit `nba_games.csv` and `nfl_games.csv` under `tests/fixtures/538/` with attribution.
+  - (a) **Hand-computed fixture from 5 real NFL rows.** The expected Brier and ECE are worked out by hand in the test file.
+  - (b) **Independent-implementation cross-check:** on all ~8.9k real NBA games, our Brier and reliability table must equal scikit-learn's `brier_score_loss` / `calibration_curve` (test-only dependency, `rtol=1e-12`).
+  - (c) Map 538's rows into our "direction + confidence" shape (favourite = direction, its probability = confidence ≥ 0.5). Check the result is identical to scoring the raw two-sided probabilities, which is the Brier identity in §1 on real data.
+- Math fixtures that are arithmetic, not data (Wilson 50/100, binomial p(8, 10), bin edges) stay as they are.
+- `report/figures.py`: the same figure spec as before. Smoke-tested by rendering the 538 NFL data.
 - `report/figures.py`:
   - `img/calibration_curve.png`: points at (bin-mean confidence, empirical accuracy) with Wilson error bars, the `y = x` reference, `n` next to each point, and a confidence histogram panel underneath. The histogram shows how few distinct values the LLM actually uses.
   - `img/baselines.png`: LLM vs random vs always-up accuracy with 95% CIs, `n` on each bar, and the random-guess 95% band shaded.
   - Use the matplotlib `Agg` backend and fixed rcParams.
 - `report/summary.py`: `metrics.json` plus the README block renderer.
-- **Exit:** `python -m sigconf.pipeline --synthetic` produces both figures and `metrics.json` from a fake signals file.
+- **Exit:** the harness reproduces the hand-computed and scikit-learn values on real 538 data, and renders both figures from it.
 
 ### Phase 3: Signal generation (~1 day)
 - Build `schema.py`, `prompt.py`, `client.py`, `budget.py`, `generate.py` and the JSONL cache, test-first with a `FakeClient` (§4).
@@ -206,9 +204,8 @@ Total ≈ 5 working days.
 ## 4. Test plan (priority: eval math > labels > signals > report)
 
 **`eval/` (hardest)**
-- Hand-computed fixture: confidences `[0.55, 0.65, 0.65, 0.85, 0.95]`, hits `[1, 0, 1, 1, 0]`
-  - Brier = (0.2025 + 0.4225 + 0.1225 + 0.0225 + 0.9025) / 5 = **0.3345**
-  - ECE = (1·0.45 + 2·0.15 + 1·0.15 + 1·0.95) / 5 = **0.37** (bins [.5,.6) n1 · [.6,.7) n2 acc .5 · [.8,.9) n1 · [.9,1] n1)
+- Hand-computed fixture on **5 real 538 NFL games** (expected values written out by hand in the test).
+- Cross-check against scikit-learn on all real 538 NBA games (see Phase 2).
 - Bin edges: 0.5 → `[.5,.6)`; 0.6 → `[.6,.7)`; 0.9 → `[.9,1.0]`; 1.0 → `[.9,1.0]`; 0.4999 → `[0,.5)`.
 - Empty bins are left out and bin weights sum to 1.
 - Brier identity: the `(c, hit)` and `(P(up), y)` formulations agree on random inputs.
@@ -219,7 +216,7 @@ Total ≈ 5 working days.
 
 **`data/labels.py`**
 - Pre-close intraday on a trading day gives `t0 = D`. **Exactly 16:00:00** gives the next day ("strictly after"). After close gives the next trading day.
-- Friday after close, Saturday, and a holiday (e.g. 2019-07-04) all roll to the next trading day. `00:00:00` is treated as time unknown and gives the next trading day.
+- Friday after close, Saturday, and a holiday (e.g. 2019-07-04) all roll to the next trading day. Midnight ET **and midnight UTC** are treated as time unknown and give the next trading day after that date.
 - A UTC-timestamped input converts correctly across both DST transitions.
 - Dead-band boundaries: `r = +0.0010` → up, `r = +0.00099` → flat, `r = −0.0010` → down.
 - **Look-ahead invariant:** for every labeled row, `close_time(t0) > published_at`. This runs as a unit test and as a data test on the committed sample.
@@ -244,14 +241,16 @@ Total ≈ 5 working days.
 
 | Risk | Mitigation |
 |------|------------|
-| **Training-data contamination.** Headlines from 2009–2020 are inside the model's training data, so it may "know" how big events played out. This is a form of look-ahead in its own right. | No dates in the prompt. Make it limitation #1 in the README. Excluding it requires headlines from after the model's training cutoff, which goes under "what I'd do next". |
+| ~~Training-data contamination~~ | **Addressed 2026-09-11:** every headline postdates gpt-4o-mini's 2023-10-01 cutoff, the model is locked, and a data test enforces it. What remains is that the model has general priors about Apple. That is ordinary background knowledge, not outcome memory. |
+| **One ticker, one year, regime shift.** AAPL only, 2023-11 → 2024-11. Dev is bearish (33% up) and test bullish (61% up). | State both in the README. Always-up (61%) is the baseline to beat. Multi-ticker and walk-forward go under "what I'd do next". |
+| Headline text changed after its timestamp | Live blogs are excluded, and timestamps were verified against earnings releases. Ordinary articles can still get small title edits, which stays a documented residual risk. |
 | **Small n.** With 105 test items and 30–50% neutral, there may be only ~55–75 directional points, so CIs are about ±12 pp. | CIs on every number, the ECE null distribution, and framing as a method demo. Don't scale up (spec §3). |
 | **Confidence clustering.** LLMs tend to use 3–5 distinct values (0.7 / 0.8 / 0.85…), so few bins get populated. | Histogram panel, report the count of distinct values, and bins keyed on mean confidence. That alone is a useful finding. |
 | High neutral rate lowers coverage | Pre-set dev-set decision rule (Phase 3). |
-| ~~Timestamp / timezone ambiguity~~ | **Resolved in Phase 1:** 100% of offsets match America/New_York DST rules (`notes/phase1_data_audit.md`). |
+| ~~Timestamp ambiguity~~ | **Resolved in Phase 1:** UTC timestamps verified against real events, and date-only rows excluded (`notes/phase1_data_audit.md`). |
 | Early-close days (13:00 ET) | Rare. The close is assumed to be 16:00, documented as a known approximation. |
 | LLM nondeterminism | The committed cache is the source of truth, and `--offline` reproduction is checked in Phase 5. |
-| Benzinga headline copyright | Commit only the 150-row slice, with attribution. If that is judged too much, commit IDs plus the build script instead (reproducing then needs a Kaggle account). |
+| Headline copyright (publishers own the titles) | Commit only the 150-row slice, with attribution. If that is judged too much, commit IDs plus the build script instead (reproducing then needs a Kaggle account). |
 | Scope creep | Spec §3. New ideas go into the README's "what I'd do next", not into code. |
 
 ---
@@ -269,8 +268,7 @@ Total ≈ 5 working days.
 - [ ] No real LLM calls in tests or CI
 
 ## 7. README "what I'd do next" candidates (write these up, don't build them)
-- Headlines from after the model's training cutoff, to rule out contamination
-- Walk-forward evaluation across market regimes, with more tickers
+- More tickers and walk-forward evaluation across market regimes, still restricted to post-cutoff data
 - Token-logprob confidence compared with verbalized confidence
 - Recalibration (Platt / isotonic fitted on dev, applied to test)
 - Brier decomposition (reliability / resolution / uncertainty)

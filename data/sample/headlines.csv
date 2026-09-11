@@ -1,151 +1,151 @@
 id,ticker,published_at,headline,split
-h000,NVDA,2011-03-16T07:13:00-04:00,Oppenheimer Comments On Intel & NVIDIA Following CFO Resignation,dev
-h001,NVDA,2011-04-26T14:50:00-04:00,"Strong Price Action In NVDIA (NVDA, INTC)",dev
-h002,NVDA,2011-05-13T08:59:00-04:00,Deutsche Bank Reports GPU Driven Upside For NVDA,dev
-h003,NVDA,2011-06-15T10:42:00-04:00,"NVIDIA Corporation Spiking Lower, Hearing Google Nexus won't feature Nividia",dev
-h004,JNJ,2011-09-14T15:56:00-04:00,"J&J Unit, US In Plea Pact For Natrecor Marketing Probe - Court Filing",dev
-h005,JNJ,2011-09-14T19:15:00-04:00,Johnson & Johnson to Face Arkansas Trial Over Risperdal -Bloomberg,dev
-h006,JNJ,2011-09-19T16:00:00-04:00,Piper Jaffray Comments on Johnson & Johnson,dev
-h007,NVDA,2011-11-01T08:33:00-04:00,"Canaccord Downgrades NVIDIA to Hold, $15 PT",dev
-h008,NVDA,2011-11-10T16:36:00-05:00,NVIDIA Corporation Pops on Q3 Results,dev
-h009,NVDA,2011-11-22T07:45:00-05:00,"Needham Upgrades Nvidia to Buy, $18 PT",dev
-h010,JNJ,2011-11-29T09:48:00-05:00,UPDATE: Citi Lowers PT to $70 on Johnson & Johnson,dev
-h011,JNJ,2011-12-27T21:03:00-05:00,"Fast Money Picks For December 28th (CP, TSM, SLB, SBUX, JNJ, ANF)",dev
-h012,JNJ,2012-01-04T15:00:00-05:00,J&J and CR Bard Ordered to Study Injuries from Vaginal Implants,dev
-h013,JNJ,2012-01-24T14:48:00-05:00,Hearing William Blair Making Negative Comments on Mako Surgical; Johnson & Johnson Not Interested in Acquistion,dev
-h014,JNJ,2012-03-12T14:07:00-04:00,"Option Alert: Johnson & Johnson July 70 Call; Block Trade, 10,000 Contracts",dev
-h015,NVDA,2012-04-02T14:05:00-04:00,Positive Rumors Circulate About Nvidia,dev
-h016,NVDA,2012-05-31T06:54:00-04:00,Morgan Stanley Initiates Coverage on Nvidia at Equal-weight,dev
-h017,JNJ,2012-05-31T16:55:00-04:00,"5 Risky Dividend Stocks (WIN, EXC, FTR, HAS, JNJ)",dev
-h018,NVDA,2012-06-07T08:12:00-04:00,"FBR Capital Markets Lowers PT on NVIDIA from $20 to $18, Maintains Outperform",dev
-h019,NVDA,2012-11-07T12:14:00-05:00,"Wedbush Securities Maintains Nvidia at Outperform, Lowers PT from $20 to $17",dev
-h020,JNJ,2012-11-19T07:45:00-05:00,J&J's Janssen-Cilag's ZYTIGA Receives Positive EU Recommendation,dev
-h021,JNJ,2013-01-02T09:27:00-05:00,J&J Declares $0.61/Share Q1 Dividend,dev
-h022,JNJ,2013-01-22T07:46:00-05:00,Johnson & Johnson Reports Q4 EPS of $1.19 vs $1.17 Est; Revenue of $17.60B vs $17.67B Est,dev
-h023,JNJ,2013-02-07T08:14:00-05:00,"Credit Suisse Downgrades Johnson & Johnson to Underperform, Raises PT to $73.00",dev
-h024,JNJ,2013-04-15T15:13:00-04:00,Lawyer Says J&J Jury Should Award $5M for Defective Hip,dev
-h025,JNJ,2013-04-25T10:38:00-04:00,Johnson & Johnson Announces Dividend Increase of 8.2% to $0.66 per Share,dev
-h026,JNJ,2013-05-16T13:29:00-04:00,Johnson & Johnson Stops Selling Metal Liners in Metal on Metal Hip Replacement Product; Says Decision Stemmed From Low Sales -Bloomberg,dev
-h027,NVDA,2013-06-04T08:12:00-04:00,NVIDIA Shares Lower Despite WSJ Headline 'NVIDIA Open to Deals That Fit Into Businesses',dev
-h028,NVDA,2013-06-14T06:46:00-04:00,"Short Sellers Less Keen on Applied Materials, Marvell Technology (AMAT, NVDA, MRVL)",dev
-h029,NVDA,2013-06-18T17:08:00-04:00,NVIDIA Says Will Begin Licensing GPU Technology,dev
-h030,NVDA,2013-07-23T09:04:00-04:00,NVIDIA Appoints Former PepsiCo. Exec Dawn Hudson to Its Board of Directors,dev
-h031,JNJ,2013-09-06T13:10:00-04:00,DJ Reporting J&J Rumored to Hold Talks to Sell Diagnostics Unit,dev
-h032,NVDA,2013-10-11T07:26:00-04:00,"Macquarie Downgrades NVIDIA Corporation to Underperform, Lowers PT to $14.00",dev
-h033,NVDA,2013-11-18T06:23:00-05:00,"Morgan Stanley Downgrades NVIDIA Corporation to Underweight, Announces $13.00 PT",dev
-h034,JNJ,2013-12-12T12:48:00-05:00,Johnson & Johnson Shares Under Pressure For Second Day in a Row,dev
-h035,JNJ,2014-01-10T08:54:00-05:00,"Barclays Downgrades Johnson & Johnson to Equalweight, Maintains $99.00 PT",dev
-h036,JNJ,2014-01-21T07:46:00-05:00,Johnson & Johnson Sees FY2014 EPS $5.75-5.85 vs $5.85 Est,dev
-h037,JNJ,2014-03-04T09:22:00-05:00,J&J Says New Data on XEPLION Significantly Delays Time to Relapse,dev
-h038,JNJ,2014-04-14T08:50:00-04:00,"Jefferies Downgrades Johnson & Johnson to Hold, Maintains $105.00 PT",dev
-h039,NVDA,2014-05-06T09:02:00-04:00,NVIDIA Corporation Reports Q1 EPS of $0.29 vs $0.17 Est,dev
-h040,NVDA,2014-06-19T08:02:00-04:00,UPDATE: Bank Of America Downgrades NVIDIA,dev
-h041,JNJ,2014-06-23T14:30:00-04:00,#Premarket Prep Technical Update - Johnson & Johnson Trading Lower,dev
-h042,JNJ,2014-07-17T11:00:00-04:00,Shares of Minerva Neurosciences Moving Higher Following 13G Filing from J&J Showing 18% Stake in Co.,dev
-h043,JNJ,2014-07-18T16:12:00-04:00,Why Has Wall Street Punished Johnson & Johnson For Its Earnings Beat?,dev
-h044,JNJ,2014-08-25T07:12:00-04:00,"VIVUS Announces Purchase of Topiramate-Related Patents from J&J's Janssen Pharma, Will Dismiss Suit Against VIVUS",dev
-h045,JNJ,2014-09-04T17:16:00-04:00,"Johnson & Johnson Metal Hip Might Lead To Poisoning, Facing 6,000+ Suits",test
-h046,JNJ,2014-09-16T15:51:00-04:00,#Premarket Prep Technical Update - Johnson & Johnson Trading Higher,test
-h047,JNJ,2014-09-19T15:38:00-04:00,#Premarket Prep Technical Update - Johnson & Johnson Makes New All-Time High,test
-h048,JNJ,2015-01-21T07:54:00-05:00,Morgan Stanley Sees Balance Sheet & Pipeline As More Critical For Johnson & Johnson,test
-h049,JNJ,2015-05-11T17:49:00-04:00,J&J's Janssen Pharma Announces FDA Issued CRL to sNDA for Expanded Labe on INVEGA SUSTENNA,test
-h050,NVDA,2015-05-27T10:10:00-04:00,Option Alert: Nvidia Jul $22 Call; 1111 Contract Trade at Ask @$0.40,test
-h051,NVDA,2015-08-03T09:08:00-04:00,"PC Market Be Damned, NVIDIA Stock Is A Buy",test
-h052,NVDA,2015-10-09T13:27:00-04:00,Nvidia Shares Rebounding Off LOD Following Announcement Co. Lost First Round Of Patent Dispute With Samsung And Qualcomm,test
-h053,NVDA,2015-11-03T07:39:00-05:00,Needham Downgrades NVIDIA to Hold,test
-h054,NVDA,2015-12-09T10:11:00-05:00,Option Alert: NVDA Jan16 36.0 Calls Sweep: 959 @ ASK $0.48: 972 traded vs 2975 OI: $33.37 Ref,test
-h055,NVDA,2015-12-16T07:49:00-05:00,"MKM Partners Top Picks For 2016: ACE, CTXS, EA, FIVE, GOOGL, INFN, LB, MYCC, NVDA, TOL, VIAV",test
-h056,NVDA,2015-12-28T14:25:00-05:00,Option Alert: NVDA Fri 1/8 33.0 Calls (Wkly) Sweep: 700 @ ASK $0.80: 1205 traded vs 3130 OI: Earnings 2/10 $32.94 Ref,test
-h057,NVDA,2016-01-14T10:35:00-05:00,"Barclays Downgrades Nvidia, Likes Skyworks, Cirrus And Others",test
-h058,NVDA,2016-01-20T07:14:00-05:00,"JMP Sees NVIDIA Slide From $33.44 2 Weeks Ago To Current Share Price Of $27.35 Ahead Of VR, AI, And Autonomous Driving",test
-h059,NVDA,2016-03-08T11:47:00-05:00,> Option Alert: NVDA Apr16 26.0 Puts Sweep: 1170 @ ASK $0.17: 3868 traded vs 729 OI: $31.89 Ref,test
-h060,JNJ,2016-03-14T08:13:00-04:00,"Goldman Upgrades Johnson & Johnson, Removes From America's Sell List",test
-h061,NVDA,2016-03-23T10:14:00-04:00,Global Equities Trip Chowdhry Says Nvidia Business Extremely Strong,test
-h062,NVDA,2016-04-27T17:04:00-04:00,"3 Put Spread Strategies For The Next Week: McDonald's, Johnson & Johnson And Nvidia",test
-h063,NVDA,2016-05-02T09:01:00-04:00,"NVIDIA, Samsung Agree to Settle All Outstanding IP Litigation, Terms Not Disclosed",test
-h064,JNJ,2016-05-20T07:37:00-04:00,Standpoint Research Initiates Coverage on Johnson & Johnson at Sell,test
-h065,NVDA,2016-05-26T15:59:00-04:00,Option Alert: NVDA Jun16 45.5 Puts Sweep: 1174 @ ASK $1.24: 4447 traded vs 237 OI: $45.62 Ref,test
-h066,JNJ,2016-07-19T06:41:00-04:00,"Johnson & Johnson Q2 EPS $1.74 vs $1.68 est, Revenue $18.5B vs $18.0B est",test
-h067,NVDA,2016-08-09T14:50:00-04:00,Option Alert: NVDA Aug16 58.0 Puts Sweep: 2500 @ ASK $2.10: 2568 traded vs 212 OI: Earnings 8/11 After Close $59.06 Ref,test
-h068,NVDA,2016-08-19T15:22:00-04:00,"Intel To Develop Autonomous Vehicle Solution To Compete Against Nvidia, Mobileye; CLSA Remains Unimpressed",test
-h069,JNJ,2016-09-19T10:16:00-04:00,Credit Suisse Can Clearly See Why Johnson & Johnson Acquired Abbott's Optics Division,test
-h070,NVDA,2016-11-11T14:48:00-05:00,NVIDIA's Blowout Quarter Helps It Remain A Top Pick At Jefferies,test
-h071,JNJ,2016-11-28T13:49:00-05:00,"Financial Times Reporting, 'Actelion weighs complicated deal to combine with part of J&J'",test
-h072,JNJ,2016-12-05T16:12:00-05:00,Sanofi Said To Explore Actelion Counterbid To Johnson & Johnson,test
-h073,NVDA,2016-12-20T06:22:00-05:00,"Mizuho Maintains Buy on NVIDIA, Raises Target from $80 to $115.00",test
-h074,NVDA,2017-01-19T14:22:00-05:00,"CEO Huang Registers 125,002 Shares of NVIDIA -Form 144",test
-h075,NVDA,2017-02-07T13:26:00-05:00,Jim Cramer: NVIDIA Will Prove Its Worth,test
-h076,NVDA,2017-03-09T09:47:00-05:00,"NVIDIA Shares Spiking Higher, The Tech Report Announced Positive Review Of GTX 1080 TI Graphics Card",test
-h077,NVDA,2017-05-01T08:44:00-04:00,Gearing Up For Nvidia's Q1 Earnings: A Technical Take,test
-h078,NVDA,2017-05-13T09:33:00-04:00,Here's What You Missed From Nvidia's Analyst Day,test
-h079,NVDA,2017-06-05T09:47:00-04:00,"UPDATE: AMD Shares Up 2%, NVIDIA Up 0.9%, Intel Up 0.2% Amid Fudzilla Report; BZ NOTE: Publication is Same Source Which Recently Reported Deal Which Failed to Materialize: Intel Dropped NVIDIA for AMD; Watch for Profit Taking in Semi Stocks",test
-h080,JNJ,2017-06-09T12:10:00-04:00,Tesaro Volatile After Johnson & Johnson Suspends Enrollment In Prostate Cancer Trial,test
-h081,NVDA,2017-06-13T15:30:00-04:00,"Despite A Hard Loss, Nvidia Is Still Winning",test
-h082,NVDA,2017-07-10T04:17:00-04:00,Jefferies Maintains Buy Rating on Nvidia; Raises PT To $180 from $140,test
-h083,NVDA,2017-07-11T14:26:00-04:00,AMD's RX Vega Vs. Nvidia's GTX1080: The Great Rivalry Heats Up,test
-h084,JNJ,2017-07-20T11:40:00-04:00,"Johnson & Johnson Shares Strong Since Actelion Acquisition, But Potential For Upside Remains",test
-h085,JNJ,2017-08-21T09:25:00-04:00,"Premarket Prep Host Dennis Dick Tweets: Notable opening imbalances: $SNAP +354K, $GE -262K, $PFE -122K, $JNJ -92K, $BABA +81K",test
-h086,JNJ,2017-08-31T12:28:00-04:00,Johnson & Johnson Management Meetings Leave UBS Reiterating Stock As A Top Pick,test
-h087,NVDA,2017-09-11T11:58:00-04:00,AMD And Nvidia: How Vulnerable Are They To Cryptocurrency Concerns?,test
-h088,NVDA,2017-09-26T09:56:00-04:00,Chinese OEMs Will Use Nvidia's HGX Reference Architecture For Data Centers,test
-h089,NVDA,2017-10-03T15:52:00-04:00,"AMD, Nvidia Among Bank Of America's 9 Top Picks In A Q3 Strong For Semis",test
-h090,NVDA,2017-10-10T06:04:00-04:00,NVIDIA Issues Release Highlighting Deutsche Post DHL Group Has Selected Co.'s DRIVE PX For Autonomous Delivery Truck Fleet,test
-h091,NVDA,2017-10-12T14:03:00-04:00,"Nvidia Expands Lead In AI-Driven Vehicle Suppliers With New Products, New Partnerships",test
-h092,JNJ,2017-10-13T11:19:00-04:00,JNJ And IBM Report Q3 Earnings Early Next Week: What Might Be In Store?,test
-h093,JNJ,2017-10-25T16:59:00-04:00,Vetr Upgrades Johnson & Johnson Following Post-Earnings Dip,test
-h094,NVDA,2017-11-08T11:42:00-05:00,"Nvidia Q3 Earnings Preview: A Tale Of Outstanding Fundamentals, Pricey Stock",test
-h095,JNJ,2017-12-05T12:53:00-05:00,"Bayer, Johnson & Johnson Reportedly Ordered By Philadelphia Jury To Pay $29M In Xarelto Lawsuit",test
-h096,JNJ,2017-12-21T09:11:00-05:00,"FDA Grants Priority Review For Johnson & Johnson's Janssen NDA For Apalutamide, PDUFA Target Date April 2018",test
-h097,NVDA,2018-01-17T11:13:00-05:00,Nvidia Option Alert: Feb 16 $255 Calls at the Ask: 1350 @ $1.48 vs 282 OI; Earnings 2/8 After Close [est] Ref=$218.92,test
-h098,NVDA,2018-01-24T16:58:00-05:00,"Chip Stocks Q4 Earnings: Intel Sets The Tone For AMD, Nvidia",test
-h099,NVDA,2018-01-29T09:13:00-05:00,Aquantia Reports Will Deliver Multi-Gig Ethernet Capabilities On NVIDIA's DRIVE Autonomous Vehicle Platforms,test
-h100,JNJ,2018-02-01T07:43:00-05:00,"Jim Cramer Weighs In On Johnson & Johnson, STMicroelectronics, And More",test
-h101,JNJ,2018-02-27T08:02:00-05:00,Aldeyra Therapeutics Announces Collaborative Agreement with Johnson & Johnson Innovation to Advance Novel Immune-Modulating Drugs for Systemic Inflammatory Diseases,test
-h102,NVDA,2018-03-21T17:04:00-04:00,Vetr Crowd Downgrades Nvidia,test
-h103,NVDA,2018-03-26T12:53:00-04:00,NVIDIA Shares Up 2% Mon. Ahead Of Analyst Day On Tues.; BMO Sees 'very upbeat tone...particularly in light of the truly solid string of results the company has continued to deliver',test
-h104,NVDA,2018-03-27T13:05:00-04:00,"'Update: Nvidia tells CNBC that it is ""temporarily suspending the testing of [its] self-driving cars on public roads to learn from the Uber incident""'-CNBC Now Tweet",test
-h105,JNJ,2018-04-10T10:35:00-04:00,"Morgan Stanley Maintains Equal-Weight on Johnson & Johnson, Lowers Price Target to $143.00",test
-h106,NVDA,2018-04-16T11:54:00-04:00,"'Partners: Intel's Rumored Plans To Take On Nvidia, AMD With Discrete GPU Good For The Channel'",test
-h107,JNJ,2018-04-17T06:41:00-04:00,"Johnson & Johnson Reports Q1 Adj. EPS $2.06 Beats $2.01 Est., Sales $20.0B Beats $19.4B Est.",test
-h108,JNJ,2018-04-20T08:36:00-04:00,"Credit Suisse Maintains Outperform on Johnson & Johnson, Lowers Price Target to $151.00",test
-h109,JNJ,2018-05-30T09:54:00-04:00,J&J's Janssen Pharma Earlier Reported Initiation Of Phase 1b/2 Development Program Evaluating JNJ-68284528 Car-T Cells For Treatment Of Multiple Myeloma,test
-h110,JNJ,2018-06-12T16:01:00-04:00,"Johnson & Johnson Announces Acceptance Of Binding Offer From Platinum Equity To Acquire LifeScan, Inc. For Approximately $2.1B",test
-h111,JNJ,2018-06-29T10:01:00-04:00,'The success of $XLRN luspatercept is bad for $GERN and another reason for $JNJ to sever the imetelstat relationship in Q3.'-STAT's Adam Feuerstein Tweets,test
-h112,JNJ,2018-09-12T08:36:00-04:00,J&J's Janssen Reports TREMFYA Improves Long-Term Patient-reported Outcomes In Patients With Moderate To Severe Plaque Psoriasis,test
-h113,NVDA,2018-09-28T11:11:00-04:00,Watching shares of AMD and NVIDIA after Intel announced it plans to add $1B to capex in order to boost production,test
-h114,JNJ,2018-10-04T08:51:00-04:00,"Arrowhead Pharmaceuticals On Conference Call Says Working On HBV With J&J, Not Going To Create A Competing HBV Product",test
-h115,JNJ,2018-10-16T06:42:00-04:00,"Johnson & Johnson Raises FY18 Adj. EPS Outlook From $8.07-$8.1 To $8.13-$8.18 vs $8.15 Est., Sees FY18 Sales $81.0B-$81.4B vs $81.21B Est.",test
-h116,NVDA,2018-11-13T13:23:00-05:00,Nvidia shares trade up 5.4% after Susquehanna upgraded the stock from Neutral to Positive and FBR maintained shares at a Buy while lowering their price target to $240/share from $250/share. Nvidia reports Q3 results Thursday after the market closes.,test
-h117,NVDA,2018-11-15T16:52:00-05:00,NVIDIA 10-Q Discusses Crypto Mining Impact On Q3 Earnings,test
-h118,JNJ,2018-12-17T14:25:00-05:00,Johnson & Johnson CEO Alex Gorsky Issues Video Message In Defense Of Co.'s Baby Powder,test
-h119,JNJ,2018-12-20T09:46:00-05:00,"Indian Drugs Regulator Orders Johnson & Johnson To Stop Using Raw Material At Two Baby Power Factories In India, Says Co. Can't Produce Baby Powder With Current Raw Materials Until It Is Shown To Be Free Of Asbestos",test
-h120,NVDA,2018-12-31T11:31:00-05:00,NVIDIA Option Alert: Mar 15 $130 Calls at the Ask: 2250 @ $15.45 vs 374 OI; Earnings 2/7 After Close [est] Ref=$133.27,test
-h121,NVDA,2019-01-07T17:13:00-05:00,NVIDIA Introduces DRIVE AutoPilot Automated Driving System,test
-h122,NVDA,2019-02-14T16:30:00-05:00,Nvidia Shares Spike Higher Following Q4 Earnings Beat,test
-h123,JNJ,2019-03-12T07:00:00-04:00,"'Oklahoma says Johnson & Johnson was the ""kingpin"" behind the opioid crisis' -Axios",test
-h124,NVDA,2019-03-12T17:00:00-04:00,What's Next For Nvidia And Mellanox?,test
-h125,JNJ,2019-04-11T08:00:00-04:00,J&J's Janssen Presents New Data From First Phase 3 Trial Of Single-Tablet Regimen In Rapid Initiation Model Of Care,test
-h126,JNJ,2019-07-11T08:33:00-04:00,'Johnson & Johnson's stranglehold on the blockbuster drug Remicade' -Recent Axios Article,test
-h127,JNJ,2019-07-17T07:46:00-04:00,"Raymond James Maintains Outperform on Johnson & Johnson, Lowers Price Target to $146",test
-h128,JNJ,2019-07-29T16:30:00-04:00,"In June, FTC Issued Civil Investigative Demand To J&J On Investigation Of Whether Janssen's Remicade Contracting Practices Violate Antitrust Laws",test
-h129,NVDA,2019-08-01T17:04:00-04:00,Analysts Weigh In On The Semiconductor ETF And NVIDIA,test
-h130,JNJ,2019-09-04T09:16:00-04:00,European Commission Has Approved Expanded Use Of J&J's Janssen's Ustekinumab For Treatment Of Adults With Moderately To Sever Ulcerative Colitis,test
-h131,NVDA,2019-09-10T11:07:00-04:00,Game On: Nvidia Reportedly Working On Sub-$300 Graphics Card To Take On AMD,test
-h132,JNJ,2019-09-14T15:06:00-04:00,"J&J, McKesson Face $8B Damage Demand in Ohio Opioid Trial",test
-h133,JNJ,2019-09-18T16:07:00-04:00,"J&J To Report Q3 Earnings On Tues., Oct 15, 2019 Before Market Open",test
-h134,NVDA,2019-09-23T08:31:00-04:00,"SunTrust Robinson Humphrey Maintains Buy on NVIDIA, Raises Price Target to $216",test
-h135,JNJ,2019-10-17T12:11:00-04:00,"Ohio AG Yost Says Multi-State Settlement Requires Johnson & Johnson, Ethicon Inc To Pay About $117M For 'Deceptive Marketing Of Transvaginal Surgical Mesh Devices'",test
-h136,JNJ,2019-10-29T15:52:00-04:00,Johnson & Johnson Says 15 New Tests From Same Bottle Of Co.'s Baby Powder Previously Tested By FDA Find No Asbestos; Over 60 New Tests Of Recalled Lot Conducted By Two Third Party Laboratories Find No Asbestos,test
-h137,JNJ,2019-11-07T06:14:00-05:00,Johnson & Johnson Announces Submission of European Marketing Authorisation Applications for Janssen's Investigational Ebola Vaccine Regimen,test
-h138,NVDA,2019-11-11T14:19:00-05:00,"UPDATE: UBS Maintains Buy NVIDIA, Raises Target To $240 As Firm Notes 'Proof points are about to start playing out in':",test
-h139,JNJ,2019-11-20T06:41:00-05:00,"Cantor Fitzgerald Initiates Coverage On Johnson & Johnson with Overweight Rating, Announces $160 Price Target",test
-h140,JNJ,2019-12-26T16:43:00-05:00,Provention Bio 8-K Shows Co. Was Informed By J&J's Janssen Pharma It No Longer Intends To Take Up Option To Buy Back Rights For PRV-6527 Compound,test
-h141,NVDA,2020-02-04T18:11:00-05:00,Nvidia GeForce Now Game Streaming Is Now Available,test
-h142,NVDA,2020-02-10T10:03:00-05:00,NVIDIA shares are trading higher after RBC Capital maintained an Outperform rating on the stock and raised its price target from $251 to $301.,test
-h143,NVDA,2020-03-16T05:38:00-04:00,Nvidia Urges Gamers To Use Their Gaming PCs To Fight Coronavirus,test
-h144,JNJ,2020-03-30T12:10:00-04:00,"UPDATE On BZ NOTE For J&J, Abbott Headline: J&J Earlier Suggested Promise For Potential Coronavirus Vaccine Candidate, Sees Phase 1 Human Trials Starting Sept. 2020 With Results From Phase 3 Trials By End Of 2020",test
-h145,JNJ,2020-04-15T10:14:00-04:00,"Stifel Maintains Hold on Johnson & Johnson, Raises Price Target to $155",test
-h146,NVDA,2020-04-16T14:10:00-04:00,NVIDIA Says Mellanox Deal Closing Expected To Occur On Or About Apr. 27,test
-h147,JNJ,2020-04-22T07:24:00-04:00,B of A Securities Upgrades Johnson & Johnson to Buy,test
-h148,JNJ,2020-04-29T11:14:00-04:00,"Barclays Maintains Overweight on Johnson & Johnson, Raises Price Target to $182",test
-h149,NVDA,2020-05-10T16:04:00-04:00,"'Fast Money' Picks For May 11: EA, Nike, Nvidia",test
+h000,AAPL,2023-11-08T11:30:00-05:00,Why Apple's Services Business Is Such a Big Catalyst for the Stock,dev
+h001,AAPL,2023-11-09T15:41:00-05:00,AI Is Coming to Devices Everywhere. Apple and 5 More Stocks to Play the Trend.,dev
+h002,AAPL,2023-11-12T21:00:00-05:00,Apple’s China Woes Stoke $20 Billion Xiaomi Rally,dev
+h003,AAPL,2023-11-15T10:00:00-05:00,Better Buy: Amazon vs. Apple,dev
+h004,AAPL,2023-11-16T16:02:28-05:00,Apple moves to simplify messaging between iPhones and Androids,dev
+h005,AAPL,2023-11-18T07:00:00-05:00,Is Apple Stock a Buy Now?,dev
+h006,AAPL,2023-11-21T21:50:02-05:00,"Apple (NASDAQ:AAPL): Boring, But Commands Massive Pricing Power",dev
+h007,AAPL,2023-11-28T11:00:18-05:00,Looking to Upgrade Your Apple Device? It Pays to Do It at Costco,dev
+h008,AAPL,2023-11-29T07:50:00-05:00,"Charlie Munger, Markets, Fed Rates Talk, Economic Predictions, Apple in India",dev
+h009,AAPL,2023-12-03T09:30:00-05:00,"After Soaring in 2023, Is Apple a Smart Stock to Buy in 2024?",dev
+h010,AAPL,2023-12-07T10:00:00-05:00,"3 Stocks That Could Join Apple, Microsoft, Alphabet, Amazon, and Nvidia in the Trillion-Dollar Club Next Year",dev
+h011,AAPL,2023-12-15T08:55:00-05:00,"The Zacks Analyst Blog Highlights Salesforce, Intel, Microsoft, Apple and Boeing",dev
+h012,AAPL,2023-12-15T17:00:36-05:00,Apple workers deserve iDorms as good as the technology,dev
+h013,AAPL,2023-12-19T11:18:00-05:00,You could be eligible for a chunk of an Apple settlement worth $25 million,dev
+h014,AAPL,2023-12-20T10:20:00-05:00,Apple Could Hit $4 Trillion Market Cap in 2024. Why More Big Stock Gains Could Be Ahead.,dev
+h015,AAPL,2023-12-21T15:41:28-05:00,UPDATE 1-Apple cannot repair older out-of-warranty watches during ban - Bloomberg News,dev
+h016,AAPL,2023-12-21T18:46:02-05:00,Dow Jones Futures Fall As Nike Dives; Apple Leads Six Stocks To Watch With Inflation Data Due,dev
+h017,AAPL,2023-12-26T09:34:00-05:00,Apple (AAPL) to License News Archives for its Generative AI,dev
+h018,AAPL,2023-12-27T17:45:19-05:00,Apple (AAPL) Increases Yet Falls Behind Market: What Investors Need to Know,dev
+h019,AAPL,2023-12-29T09:41:00-05:00,Apple Stock Surged in 2023. It May Have 29% More Upside.,dev
+h020,AAPL,2024-01-02T17:20:00-05:00,Apple Downgrades Are Piling Up. The Latest One Hit the Stock Harder.,dev
+h021,AAPL,2024-01-03T16:32:38-05:00,Apple agrees to settle lawsuit over iTunes gift card scam,dev
+h022,AAPL,2024-01-08T05:59:00-05:00,"These Stocks Are Moving the Most Today: Boeing, Alaska Air, Spirit AeroSystems, Apple, Tesla, and More",dev
+h023,AAPL,2024-01-09T16:26:41-05:00,Apple Veteran Saori Casey Leaving to Become Sonos Finance Chief,dev
+h024,AAPL,2024-01-11T11:54:31-05:00,"Microsoft briefly overtakes Apple as world's most valuable company, before Apple takes back crown",dev
+h025,AAPL,2024-01-11T16:16:00-05:00,"After a Brief Hiatus, Apple Is the World’s Most Valuable Company Again. For Now.",dev
+h026,AAPL,2024-01-16T12:31:33-05:00,Supreme Court Rejects Apple’s Bid for Epic App Store Review,dev
+h027,AAPL,2024-01-18T04:57:00-05:00,"The Zacks Analyst Blog Highlights Apple, Boeing, Coca-Cola, Procter & Gamble and Travelers",dev
+h028,AAPL,2024-01-18T18:42:58-05:00,"Apple Sees Surgery, Training as Future Vision Pro Growth Areas",dev
+h029,AAPL,2024-01-23T13:49:00-05:00,"Apple scores record 13 Academy Award nominations, as culture-moving feature ""Killers of the Flower Moon"" lands 10 historic nominations for Best Picture, Best Actress for Lily Gladstone and Best Director for Martin Scorsese",dev
+h030,AAPL,2024-01-25T01:01:03-05:00,UPDATE 1-Apple's iPhone shipments in China drop 2% in Q4 as Huawei grows market share,dev
+h031,AAPL,2024-01-26T10:05:00-05:00,Apple Lags as Microsoft Sales Hit Highs: US Earnings Week Ahead,dev
+h032,AAPL,2024-01-29T11:20:00-05:00,Apple (AAPL) to Report Q1 Earnings: What's in the Offing?,dev
+h033,AAPL,2024-01-30T13:04:00-05:00,The Early Apple Vision Pro Reviews Are In. They Aren’t Helping the Stock.,dev
+h034,AAPL,2024-02-01T08:58:48-05:00,"Dow Jones Futures Rise On Surprise Jobless Claims; Amazon, Apple To Report",dev
+h035,AAPL,2024-02-02T17:14:16-05:00,Judge certifies Apple app store class action,dev
+h036,AAPL,2024-02-06T21:25:00-05:00,Judge Tosses Lawsuit Over Apple Watch Heart Rate Algorithm,dev
+h037,AAPL,2024-02-16T09:17:00-05:00,Apple Stockholders Want an AI Update. This Is When It Could Come.,dev
+h038,AAPL,2024-02-17T07:10:00-05:00,"Apple's Vison Pro Could Send the Stock Up 35%, According to This Wall Street Analyst",dev
+h039,AAPL,2024-02-21T09:00:00-05:00,"Introducing Apple Sports, a new app for sports fans",dev
+h040,AAPL,2024-02-22T03:07:56-05:00,"Google Follows Apple's Lead, Set To Begin Making Smartphones In This Asian Country",dev
+h041,AAPL,2024-02-27T01:23:16-05:00,Apple and Tesla Veterans Aim to Help Japan Design AI Chips,dev
+h042,AAPL,2024-02-28T11:58:00-05:00,Apple Finds Out Making Cars Is Harder Than It Looks,dev
+h043,AAPL,2024-02-29T05:17:06-05:00,Apple’s iPhone Steeply Discounted in China on Weak Demand,dev
+h044,AAPL,2024-03-01T06:30:00-05:00,"Is Apple the Best ""Magnificent Seven"" Stock to Buy Right Now?",dev
+h045,AAPL,2024-03-05T12:03:31-05:00,"UPDATE 3-US court sides with Apple, Tesla, other tech companies over child labor in Africa",test
+h046,AAPL,2024-03-05T17:12:46-05:00,Apple iPhone sales in China plummet 24% as Huawei smartphone sales surge,test
+h047,AAPL,2024-03-07T03:59:33-05:00,"UPDATE 1-EU regulators seek details of escalating Apple, Epic Games spat",test
+h048,AAPL,2024-03-08T13:00:55-05:00,Apple Stock Teeters On Edge Of Losing More Bragging Rights,test
+h049,AAPL,2024-03-09T06:45:00-05:00,Should Investors Buy the Dip in Apple Stock?,test
+h050,AAPL,2024-03-12T08:00:00-04:00,Apple to Allow App Downloads From Web to Evade EU Scrutiny,test
+h051,AAPL,2024-03-13T13:13:09-04:00,"UPDATE 1-Epic Games accuses Apple of violating App Store injunction, seeks contempt order",test
+h052,AAPL,2024-03-14T06:42:00-04:00,"Tesla and Apple Are Dropping Out of the Mag 7, Where the Opportunities Are. And 5 Other Things to Know Before Markets Open.",test
+h053,AAPL,2024-03-19T05:14:48-04:00,"Trending tickers: Nvidia, Apple, Unilever and Astrazeneca",test
+h054,AAPL,2024-03-20T00:20:08-04:00,"UPDATE 1-Apple boss Tim Cook visits Shanghai, with China sales under pressure",test
+h055,AAPL,2024-03-21T14:19:54-04:00,Apple Loses $115 Billion in Market Value as Regulators Close In,test
+h056,AAPL,2024-03-25T11:10:36-04:00,"Consumers sue Apple, taking page from US Justice Department lawsuit",test
+h057,AAPL,2024-03-25T17:00:10-04:00,Steve Jobs Didn't Become A Billionaire Because Of Apple – It Was Actually Pixar And The Toy Story Movie,test
+h058,AAPL,2024-03-30T04:45:00-04:00,Will Warren Buffett Sell More Apple Stock Because of the DOJ Antitrust Lawsuit -- and Should You?,test
+h059,AAPL,2024-04-02T09:45:36-04:00,Apple Investors Seek Signs Worst Is Over After Quarterly Slump,test
+h060,AAPL,2024-04-09T10:00:56-04:00,Apple is aiming the Vision Pro at enterprises,test
+h061,AAPL,2024-04-10T07:01:28-04:00,Apple's Pivot-From-China Gamble Pays Off: 1 In 7 iPhones Now Made In India,test
+h062,AAPL,2024-04-12T07:19:48-04:00,UPDATE 2-Apple loses bid to throw out UK lawsuit over App Store fees,test
+h063,AAPL,2024-04-16T03:07:08-04:00,"UPDATE 2-Apple wants to spend more on suppliers in Vietnam, state media says",test
+h064,AAPL,2024-04-16T23:46:09-04:00,Apple CEO says looking into possibility of building manufacturing facility in Indonesia,test
+h065,AAPL,2024-04-19T09:45:03-04:00,Apple pulls WhatsApp and Threads from App Store on Beijing's orders,test
+h066,AAPL,2024-04-26T10:06:24-04:00,"Snap upgraded, Apple downgraded: Wall Street's top analyst calls",test
+h067,AAPL,2024-04-29T15:13:12-04:00,Apple shares gain ground after Bernstein analyst upgrade,test
+h068,AAPL,2024-04-30T11:33:01-04:00,"PayPal Raises Annual Outlook, Expands Q1 Margins Amid Competitive Pressure from Apple",test
+h069,AAPL,2024-05-01T06:38:36-04:00,Apple set for big sales decline as investors await AI in iPhones,test
+h070,AAPL,2024-05-06T06:16:00-04:00,"The Zacks Analyst Blog Highlights Apple, XLK, VGT, IYW and MGK",test
+h071,AAPL,2024-05-07T00:26:29-04:00,"Apple working on AI chips for data centers, WSJ reports",test
+h072,AAPL,2024-05-10T06:58:00-04:00,"Apple’s iPad Gaffe Is a Concern but Its Future Rests on AI, and 5 Other Things to Know Today",test
+h073,AAPL,2024-05-11T03:35:00-04:00,Warren Buffett's Berkshire Hathaway Cuts Apple Stake by 12.9%. Time to Sell?,test
+h074,AAPL,2024-05-13T16:48:42-04:00,Apple Reportedly Close To Deal With OpenAI To Add AI Features To iPhone,test
+h075,AAPL,2024-05-15T10:00:00-04:00,"Apple announces new accessibility features, including Eye Tracking, Music Haptics, and Vocal Shortcuts",test
+h076,AAPL,2024-05-16T12:44:24-04:00,"Google's Potential Gemini-Apple Deal Announcement Seen Shifting to June Conference, UBS Says",test
+h077,AAPL,2024-05-17T15:59:26-04:00,"Apple’s iPad Pro is its most incredible product, but software holds it back",test
+h078,AAPL,2024-05-20T12:14:40-04:00,Top Midday Stories: Hims & Hers Health Rises on Weight Loss Injections; Apple's China Discount; Jabil Names CEO After Probe; Norwegian Boosts Guidance; Google's Finland Investment,test
+h079,AAPL,2024-05-21T11:30:00-04:00,Apple and Île-de-France Mobilités introduce Navigo card for iPhone and Apple Watch,test
+h080,AAPL,2024-05-23T10:00:02-04:00,Why Apple's $110 Billion Buyback Program Works,test
+h081,AAPL,2024-05-24T09:05:10-04:00,Apple (AAPL) Contributed to Aristotle Atlantic’s Focus Growth Composite Performance Due to its Underweight Position,test
+h082,AAPL,2024-05-28T03:25:18-04:00,"Nvidia, Apple and GameStop rise premarket; Tesla, DraftKings fall",test
+h083,AAPL,2024-05-30T05:30:00-04:00,China court rules in favour of Apple in case involving controversial app store fees,test
+h084,AAPL,2024-05-31T08:14:52-04:00,Jim Cramer Recommends Buying Apple Inc (NASDAQ:AAPL) Heading Into June,test
+h085,AAPL,2024-05-31T22:48:49-04:00,3 Reasons to be Bullish on Apple Stock (NASDAQ:AAPL),test
+h086,AAPL,2024-06-04T05:50:00-04:00,Is This the Reason Warren Buffett Sold Apple Stock?,test
+h087,AAPL,2024-06-07T13:10:09-04:00,Apple’s WWDC is crucial to the company showing it can still compete in the one area that matters,test
+h088,AAPL,2024-06-07T17:09:00-04:00,Apple Needs an AI Miracle at WWDC. The Stock Is Counting on It.,test
+h089,AAPL,2024-06-11T11:03:00-04:00,Apple Stock’s Rally Is Gaining Steam. It’s Heading for a Record Close.,test
+h090,AAPL,2024-06-13T17:22:24-04:00,Is Apple Inc. (NASDAQ:AAPL) The Best Hardware Stock To Buy According To Goldman Sachs?,test
+h091,AAPL,2024-06-17T06:59:17-04:00,Apple (AAPL) Stock Declined as Smartphone Demand Dropped,test
+h092,AAPL,2024-06-18T01:41:18-04:00,"Apple says it will end ""buy now, pay later"" service in U.S.",test
+h093,AAPL,2024-06-21T03:54:56-04:00,"Nvidia, Microsoft or Apple: Here's which stock analysts are betting on",test
+h094,AAPL,2024-06-27T15:02:06-04:00,"How much a $1,000 investment in Apple stock 10 years ago would be worth today",test
+h095,AAPL,2024-07-01T13:34:30-04:00,Apple's China issues could hamper iPhone sales in 2025: Analyst,test
+h096,AAPL,2024-07-02T04:52:41-04:00,Improved China iPhone Sales to Boost Apple Supply-Chain Companies,test
+h097,AAPL,2024-07-02T16:43:28-04:00,Apple Poised to Get OpenAI Board Observer Role as Part of AI Pact,test
+h098,AAPL,2024-07-05T06:51:45-04:00,Jim Cramer Loves Skyworks Solutions (SWKS) Because of the Apple (AAPL) Factor,test
+h099,AAPL,2024-07-08T09:34:00-04:00,Apple (AAPL) Names Brad Pitt-Starrer Formula One Movie F1,test
+h100,AAPL,2024-07-09T10:15:00-04:00,"Like Dividends? 3 Tech Stocks Worth a Look: AAPL, ASML, AVGO",test
+h101,AAPL,2024-07-17T14:24:46-04:00,How Apple and Samsung are selling gen AI is wildly different,test
+h102,AAPL,2024-07-21T08:00:19-04:00,Possible Bearish Signals With Apple Insiders Disposing Stock,test
+h103,AAPL,2024-07-23T04:45:26-04:00,Apple stock is up 30% since Q2. Now what?,test
+h104,AAPL,2024-07-25T09:30:21-04:00,Apple's Taiwanese Chip Supplier ASE Tech Clocks Modest Q2 Growth In Revenues,test
+h105,AAPL,2024-07-26T05:30:00-04:00,Apple falls: iPhone maker out of China's top 5 as Huawei ascends,test
+h106,AAPL,2024-07-29T08:35:59-04:00,Jim Cramer Thinks Apple Inc (NASDAQ:AAPL) Has Run ‘Too Much’,test
+h107,AAPL,2024-07-29T18:03:49-04:00,"Apple used Google's chips to train two AI models, research paper shows",test
+h108,AAPL,2024-08-05T17:17:00-04:00,Apple Has a Terrible Day as Big Tech Gets Slammed,test
+h109,AAPL,2024-08-08T10:30:16-04:00,"In 2021, Charlie Munger Told Warren Buffett It Was A Mistake To Sell Apple Shares. Will He Be Right Again?",test
+h110,AAPL,2024-08-10T10:00:00-04:00,Apple Says No to Nvidia GPUs. Is This the End for Nvidia?,test
+h111,AAPL,2024-08-13T13:37:06-04:00,"Apple, Intel, And AMD Lead Charge In AI-Capable PC Market Surge: Report",test
+h112,AAPL,2024-08-15T04:30:00-04:00,Prediction: 2 Stocks That Will Be Worth More Than Apple 5 Years From Now,test
+h113,AAPL,2024-08-15T18:00:16-04:00,"Warren Buffett Still Holds 400M Apple Shares, Reveals New Investments In Ulta Beauty And Heico — Elon Musk Calls Berkshire Hathaway's $277B Cash Reserves 'Wild'",test
+h114,AAPL,2024-08-18T20:01:50-04:00,Tim Cook Sees China's Future Bright For Apple – Describes China As 'The Most Competitive In The World',test
+h115,AAPL,2024-08-19T16:29:06-04:00,Apple Inc. (AAPL): This AI Stock Is Trending Right Now,test
+h116,AAPL,2024-08-21T15:55:33-04:00,"Jim Cramer on Apple Inc. (AAPL): ‘Apple Has Long Been An Own it, Don’t Trade It Stock In My Eyes’",test
+h117,AAPL,2024-08-22T12:14:19-04:00,"Apple to update EU browser options, make more apps deletable",test
+h118,AAPL,2024-08-28T04:05:00-04:00,"Warren Buffett Has More Money Invested in This Than He Does Apple, AmEx, Bank of America, Coke, Chevron, and Oxy Combined",test
+h119,AAPL,2024-08-30T08:21:52-04:00,Apple in Negotiations for Investment in OpenAI,test
+h120,AAPL,2024-09-01T07:15:00-04:00,"Warren Buffett Just Sold 389,368,450 Shares of Apple Stock. Was That a Good Idea?",test
+h121,AAPL,2024-09-04T14:16:26-04:00,Apple’s iPhone 16 launch is a big test for consumer AI,test
+h122,AAPL,2024-09-05T15:31:13-04:00,Apple Inc. (AAPL): An AI Stock You Should Not Have Missed,test
+h123,AAPL,2024-09-08T17:29:29-04:00,Apple Inc. (AAPL): Short Seller Sentiment Is Bullish,test
+h124,AAPL,2024-09-09T16:44:32-04:00,Apple Looks to Entice iPhone 16 Shoppers With Not-Quite-Ready AI,test
+h125,AAPL,2024-09-11T06:00:10-04:00,Apple picks the low-hanging fruit in iPhone unveil: Morning Brief,test
+h126,AAPL,2024-09-13T11:03:10-04:00,Apple Begins Taking Preorders For AI-Enabled iPhone 16 Handsets,test
+h127,AAPL,2024-09-17T13:03:00-04:00,JPMorgan in Talks With Apple to Take Over Credit Card From Goldman,test
+h128,AAPL,2024-09-20T05:52:09-04:00,Update: EU Launches Steps to Force Apple to Open iPhone to Rivals,test
+h129,AAPL,2024-09-24T04:51:00-04:00,Apple's Mammoth $700 Billion Investment Since 2013 Can't Fix Its Biggest Problem,test
+h130,AAPL,2024-09-30T09:28:31-04:00,Apple (AAPL) iPhone 16 Lead Times Starting to Alarm Wall Street Analysts as Bull Case Cracks,test
+h131,AAPL,2024-10-02T11:22:54-04:00,Apple Inc. (AAPL) Withdraws from Investment Round in AI Startup OpenAI Amid Competition with Microsoft,test
+h132,AAPL,2024-10-03T02:49:42-04:00,"Apple Team Reportedly Visits Fire-Hit Vendor Facility In Tamil Nadu, Offers 'Counsel And Advice' To Tata",test
+h133,AAPL,2024-10-04T15:43:10-04:00,"Apple Fourth-Quarter App Store Revenue Poised for Double-Digit Growth, UBS Says",test
+h134,AAPL,2024-10-06T17:41:17-04:00,Is Apple Inc. (NASDAQ:AAPL) The Best Morgan Stanley Overweight & Quality Stock?,test
+h135,AAPL,2024-10-09T03:15:00-04:00,"Zacks Value Investor Highlights: Tesla, Amazon, NVIDIA Apple and Meta",test
+h136,AAPL,2024-10-10T05:30:00-04:00,Huawei's China smartphone sales in August beat Apple for first time in 46 months: report,test
+h137,AAPL,2024-10-14T13:10:33-04:00,"Nvidia notches record close, could unseat Apple as most valuable company",test
+h138,AAPL,2024-10-15T09:00:00-04:00,Apple introduces powerful new iPad mini built for Apple Intelligence,test
+h139,AAPL,2024-10-17T13:33:41-04:00,"Apple's 3nm Push Boosts Taiwan Semi's Q3, AI Revenue Set To Triple: Analyst",test
+h140,AAPL,2024-10-19T03:24:00-04:00,Should You Buy Apple Stock Before Oct. 31?,test
+h141,AAPL,2024-10-22T05:37:15-04:00,"Trending tickers: Nvidia, Apple, SAP, HSBC and Mulberry",test
+h142,AAPL,2024-10-22T21:00:00-04:00,Apple Intelligence Isn’t Very Smart Yet—and Apple’s OK With That,test
+h143,AAPL,2024-10-23T16:12:51-04:00,Apple Stock Drops After Analyst Reports Cut In iPhone 16 Orders,test
+h144,AAPL,2024-10-30T07:19:00-04:00,Apple Intelligence is here. Early users are underwhelmed,test
+h145,AAPL,2024-11-02T05:00:00-04:00,"The 'world's thinnest' wafers, AI agents, and Apple's surprise: This week in new AI launches",test
+h146,AAPL,2024-11-06T05:39:53-05:00,Tech Stocks Gain But Apple and Meta Lag Behind Amid Election results,test
+h147,AAPL,2024-11-13T16:14:34-05:00,"Smart Home Devices Could Boost Apple Stock, Analyst Says",test
+h148,AAPL,2024-11-20T10:51:00-05:00,Qualcomm Plans for Life After Apple. It’s Coming for Intel and AMD.,test
+h149,AAPL,2024-11-22T00:01:00-05:00,Huawei’s Chip Advances Threaten Apple in China,test

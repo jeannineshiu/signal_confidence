@@ -27,26 +27,30 @@ IMG_DIR = ROOT / "img"
 # ── Pre-registered analysis decisions (PLAN.md §1) ────────────────────────────
 SEED = 42
 
-# Universe: a high-volatility tech name and a low-volatility defensive name,
-# both with >700 distinct days of company-specific headlines in the dataset.
-# A headline is eligible only if it names the company (pattern below) and is
-# not a multi-stock list item ("Stocks That Hit 52-Week Highs On Friday"),
-# which says nothing specific about the ticker. Matching is case-insensitive.
-TICKER_PATTERNS = {
-    "NVDA": r"nvidia|\bnvda\b",
-    "JNJ": r"johnson\s*&\s*johnson|\bj\s*&\s*j\b|\bjnj\b",
-}
-LIST_HEADLINE_PATTERN = (
-    r"stocks (?:that|moving|to watch)|biggest movers|top \d|\d+ stocks|mid-day|pre-market"
-    r"|after-hours|session|earnings scheduled|mid-afternoon"
-)
-# Coverage for both tickers is thin before 2011; the dataset ends in June 2020.
-SAMPLE_START = "2011-01-01"
-PRICE_START = "2010-12-01"
-PRICE_END = "2020-07-01"  # exclusive; leaves room for t1 after the last headline
-RAW_HEADLINES_FILE = "analyst_ratings_processed.csv"
+# ── Contamination boundary ────────────────────────────────────────────────────
+# Every headline must postdate the LLM's training cutoff, so the model cannot
+# "remember" how the news played out. gpt-4o-mini's documented knowledge cutoff
+# is 2023-10-01; sampling starts a month later as a margin. Using a model whose
+# cutoff is later than SAMPLE_START voids this guarantee, so the signal stage
+# refuses any model not listed here with a cutoff before SAMPLE_START.
+LLM_TRAINING_CUTOFFS = {"gpt-4o-mini": "2023-10-01"}
+SAMPLE_START = "2023-11-01"
 
-N_HEADLINES = 150  # split evenly across TICKER_PATTERNS
+# ── Universe ──────────────────────────────────────────────────────────────────
+# Source: Kaggle "Apple Stock (AAPL): Historical Financial News Data"
+# (frankossai), mostly Yahoo Finance headlines, timestamps in UTC, ends 2024-11.
+TICKER = "AAPL"
+RAW_HEADLINES_FILE = "apple_news_data.csv"
+# Eligible: names the company (case-insensitive) …
+COMPANY_PATTERN = r"\bapple\b|\baapl\b"
+# … and is not a live blog. Live-blog titles are rewritten as the day goes on
+# while the timestamp keeps the first publication time, so the title can carry
+# information from after its own timestamp — a look-ahead leak.
+LIVE_BLOG_PATTERN = r"live coverage|live updates|stock market today|\blive:"
+PRICE_START = "2023-10-01"
+PRICE_END = "2025-01-01"  # exclusive; leaves room for t1 after the last headline
+
+N_HEADLINES = 150
 # Chronological split: the earliest DEV_FRACTION of headlines is used only to
 # iterate on the prompt; every reported number comes from the remainder.
 DEV_FRACTION = 0.30

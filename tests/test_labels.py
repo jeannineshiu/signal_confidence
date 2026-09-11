@@ -11,6 +11,7 @@ from sigconf.data.labels import (
     anchor_positions,
     close_times,
     direction_from_return,
+    is_time_unknown,
     label_headlines,
 )
 
@@ -56,6 +57,23 @@ def test_anchor_day_rule(published, expected_t0):
 def test_unknown_time_of_day_is_treated_as_after_the_close():
     # 00:00:00 local means "time unknown": the headline may have come after the close.
     assert t0_of("2019-07-02T00:00:00-04:00") == date(2019, 7, 3)
+
+
+def test_utc_midnight_date_only_is_not_read_as_the_previous_evening():
+    # 00:00 UTC on 07-02 is 20:00 ET on 07-01; at face value it would anchor on
+    # 07-02. As a date-only 07-02 item it may be from after 07-02's close → 07-03.
+    assert t0_of("2019-07-02T00:00:00Z") == date(2019, 7, 3)
+    # Winter: 00:00 UTC = 19:00 EST the previous evening; same treatment.
+    assert t0_of("2019-01-15T00:00:00Z") == date(2019, 1, 16)
+    # Date-only on a Friday → Monday.
+    assert t0_of("2019-07-05T00:00:00Z") == date(2019, 7, 8)
+
+
+def test_is_time_unknown_flags_only_exact_midnights():
+    s = pd.Series(pd.to_datetime(
+        ["2019-07-02T00:00:00Z", "2019-07-02T04:00:00Z", "2019-07-02T00:00:01Z",
+         "2019-07-02T04:01:00Z"], utc=True))
+    assert is_time_unknown(s).tolist() == [True, True, False, False]
 
 
 def test_a_real_time_just_after_midnight_is_not_treated_as_unknown():
