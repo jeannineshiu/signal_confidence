@@ -5,7 +5,7 @@ If the two conflict, the spec wins. Update this plan instead of letting it drift
 
 ---
 
-## 0. Decisions to confirm before Phase 1
+## 0. Decisions (confirmed 2026-09-11)
 
 | # | Decision | Recommendation | Alternative / note |
 |---|----------|----------------|--------------------|
