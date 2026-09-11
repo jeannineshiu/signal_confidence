@@ -1,6 +1,9 @@
 # Secrets
 .env
 
+# Project spec is kept local (PLAN.md's "spec §N" references point into it)
+SPEC_signal_confidence.md
+
 # Raw third-party data (only the sampled slice in data/sample/ is committed)
 data/raw/
 

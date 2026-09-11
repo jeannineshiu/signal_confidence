@@ -1,6 +1,6 @@
 # PLAN — LLM Signal Confidence & Calibration
 
-Drafted 2026-09-11. `SPEC_signal_confidence.md` sets the requirements (the *what*). This file covers the *how* and *in what order*.
+Drafted 2026-09-11. The project spec sets the requirements (the *what*). It is kept locally and is not in this repo, and "spec §N" below refers to its sections. This file covers the *how* and *in what order*.
 If the two conflict, the spec wins. Update this plan instead of letting it drift.
 
 ---
@@ -58,7 +58,6 @@ Spec §7 names the modules `data/ signals/ eval/ report/`. They live under a pac
 
 ```
 signal_confidence/
-├── SPEC_signal_confidence.md
 ├── PLAN.md
 ├── README.md                    # RESULTS block auto-generated between markers
 ├── Makefile                     # install | sample | run | test | lint
