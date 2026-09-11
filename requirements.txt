@@ -1,0 +1,17 @@
+# Pinned for reproducibility (spec §2). Python 3.11.
+# Deliberately absent: scipy (Wilson / exact binomial are implemented and tested
+# in sigconf/eval) and LangChain (one structured call per headline needs only
+# the openai SDK + pydantic).
+
+# ── Runtime ───────────────────────────────────────────────────────────────────
+openai==3.13.0
+pydantic==2.13.5
+pandas==3.0.5
+numpy==2.4.6
+yfinance==1.7.0
+matplotlib==3.11.1
+python-dotenv==1.2.3
+
+# ── Dev ───────────────────────────────────────────────────────────────────────
+pytest==9.1.1
+ruff==0.16.7
