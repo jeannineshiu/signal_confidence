@@ -69,7 +69,7 @@ reports would be invisible at n = 77, where the 95% interval spans 37–59%.
 ![Reliability diagram: stated confidence vs empirical accuracy on the held-out test split, with the distribution of stated confidences below](img/calibration_curve.png)
 
 **Reading: the model is over-confident.** Every populated bin sits below the diagonal:
-- When it said 0.70–0.75 it was right 52.5% of the time (n = 61).
+- In the 0.70–0.80 bin (its 0.70 and 0.75 calls) it was right 52.5% of the time (n = 61).
 - Its 0.65 calls were right 27% of the time (n = 11).
 - Its 0.8 calls were right 2 times out of 5.
 
@@ -256,9 +256,10 @@ make test                           # 210+ tests, including an offline reproduct
 
 `make run` does the same but calls the LLM for any headline missing from `data/cache/signals.jsonl`. It
 needs `OPENAI_API_KEY` in `.env` (see `.env.example`) and is bounded by the cost caps. `make run SPLIT=dev`
-regenerates `results/dev/`, and `make logprob` re-runs the secondary analysis (its own cache,
-`data/cache/signals_logprob.jsonl`). `make sample` rebuilds the headline sample and price cache from the raw
-Kaggle file, which is not needed to reproduce results.
+regenerates `results/dev/`. `make logprob` re-runs the secondary analysis (its own cache,
+`data/cache/signals_logprob.jsonl`) and `make corp` the CORP decomposition (committed primary cache only,
+never the LLM). `make sample` rebuilds the headline sample and price cache from the raw Kaggle file, which
+is not needed to reproduce results.
 
 **Data sources**
 - Headlines: Kaggle, *Apple Stock (AAPL): Historical Financial News Data*
