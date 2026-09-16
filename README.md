@@ -29,6 +29,41 @@ Coverage funnel: 105 headlines → 0 API errors, 0 parse failures, 22 neutral, 6
 
 ![Directional accuracy of the LLM signal vs a coin flip and always-up on the same 77 held-out items](img/baselines.png)
 
+### In context: what the literature leads us to expect
+
+The reference study for LLMs reading news headlines is Lopez-Lira & Tang, *Can ChatGPT Forecast Stock
+Price Movements? Return Predictability and Large Language Models* (*Journal of Financial Economics*
+184, 104335, 2026; [arXiv:2304.07619](https://arxiv.org/abs/2304.07619)). It uses 159,137 headlines on
+4,123 U.S. stocks from October 2021 to May 2024, all after the models' training cutoff, with GPT-4 as the
+main model.
+The roughly 90% figure often quoted from it is a portfolio-day hit rate on the **initial reaction** to
+the news, which the authors call non-tradable. This project measures what the paper finds much harder to
+predict, on the kind of stock where it finds the least to predict:
+
+- **The label is the drift, not the initial reaction.** Entry is the first close strictly after
+  publication, so the initial reaction is never scored. For the 29 of 77 scored headlines published
+  during trading hours, the label (close of the news day → next close) is exactly the paper's
+  "subsequent drift" window. For the other 48, published before the open, after the close or on a
+  non-trading day, it starts one session later still, after the paper's drift window (open → close) has
+  ended. On the drift, GPT-4's long-short portfolios had positive returns on 58% (overnight news) and
+  55% (intraday news) of days.
+- **AAPL is a mega-cap, and the drift is mainly a small-stock effect.** The paper finds drift
+  predictability "substantially stronger among smaller stocks" (below the NYSE 20th size percentile).
+  After negative news, the largest third of stocks show no drift at all. The paper does not find zero
+  drift for large stocks in general, but among U.S. stocks AAPL is one of the least likely places to
+  find it.
+- **A small model, late in a declining trend.** This project used gpt-4o-mini, not GPT-4, and the paper
+  finds forecasting ability generally rises with model size. The paper's strategy also weakened over
+  time: its annualised Sharpe ratio fell from 6.54 in 2021Q4 to 1.22 in January–May 2024. The authors
+  present this as suggestive evidence that prices became more efficient as LLM adoption rose. The test window here (March–
+  November 2024) overlaps only the last months of that series.
+
+A near-coin-flip result is therefore what the literature leads one to expect from this design. It is
+not a sign that the harness is broken. For the same reasons, it says little about whether LLMs can read
+news at all. The paper's hit rates count days with a positive portfolio return, not correct headlines,
+so they are not directly comparable to the accuracy above. Even so, a drift edge of the modest size it
+reports would be invisible at n = 77, where the 95% interval spans 37–59%.
+
 ## Calibration curve
 
 ![Reliability diagram: stated confidence vs empirical accuracy on the held-out test split, with the distribution of stated confidences below](img/calibration_curve.png)

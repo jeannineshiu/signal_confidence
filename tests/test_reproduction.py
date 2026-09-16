@@ -95,6 +95,20 @@ def test_readme_results_block_matches_committed_metrics():
     assert summary.replace_results_block(text, block) == text
 
 
+def test_readme_claim_about_when_scored_test_headlines_were_published():
+    """README "In context": 29 of the 77 scored test headlines were published during
+    trading hours on their anchor day; the other 48 before the open, after the close,
+    or on a non-trading day, so their label starts one session after the news."""
+    import pandas as pd
+
+    _, scored = run_split("test", offline=True, client_factory=refuse, log=lambda _: None)
+    rows = scored[scored["state"] == "scored"]
+    et = pd.to_datetime(rows["published_at"], utc=True).dt.tz_convert("America/New_York")
+    on_anchor_day = pd.to_datetime(rows["t0"]).dt.date == et.dt.date
+    in_session = on_anchor_day & (et.dt.hour * 60 + et.dt.minute >= 9 * 60 + 30)
+    assert (len(rows), int(in_session.sum())) == (77, 29)
+
+
 def test_the_comparator_is_strict_where_it_must_be():
     with pytest.raises(AssertionError):
         assert_same({"n": 31}, {"n": 30})
